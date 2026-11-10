@@ -43,4 +43,37 @@ class GreedyLineBreakerTest {
                 IllegalArgumentException.class,
                 () -> breaker.breakLines("Hello", 3));
     }
+
+    @Test
+    void returnsNoLinesForEmptyText() {
+        assertEquals(List.of(), breaker.breakLines("", 10));
+    }
+
+    @Test
+    void rejectsNullText() {
+        assertThrows(
+                NullPointerException.class,
+                () -> breaker.breakLines(null, 10));
+    }
+
+    @Test
+    void rejectsNegativeWidth() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> breaker.breakLines("Hello", -1));
+    }
+
+    @Test
+    void wrapsAtWidthOne() {
+        assertEquals(
+                List.of("a", "b", "c"),
+                breaker.breakLines("a b c", 1));
+    }
+
+    @Test
+    void normalizesExtraWhitespace() {
+        assertEquals(
+                List.of("Hello world"),
+                breaker.breakLines("  Hello\t  world  ", 11));
+    }
 }
