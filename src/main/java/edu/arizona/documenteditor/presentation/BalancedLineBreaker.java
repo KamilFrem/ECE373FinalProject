@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Wraps text by minimizing squared unused space across all lines.
- */
+// Wraps text by minimizing squared unused space across all lines.
+
 public final class BalancedLineBreaker implements LineBreaker {
 
     @Override
@@ -28,8 +27,7 @@ public final class BalancedLineBreaker implements LineBreaker {
 
         for (String word : words) {
             if (word.length() > width) {
-                throw new IllegalArgumentException(
-                        "A word is longer than the selected width.");
+                throw new IllegalArgumentException("A word is longer than the selected width.");
             }
         }
 
