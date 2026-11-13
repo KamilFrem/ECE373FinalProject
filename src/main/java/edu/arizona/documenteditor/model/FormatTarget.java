@@ -1,3 +1,9 @@
+//------------------------------------------------------
+// FinalProject
+// Written by: Group 8
+// ECE 373 Object-Oriented Software Design, Section 001 - Fall 2026
+// The University of Arizona
+//------------------------------------------------------
 package edu.arizona.documenteditor.model;
 
 import java.util.List;
