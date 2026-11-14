@@ -44,7 +44,9 @@ class TextRunTest {
     @Test
     @DisplayName("TextRun does not accept null text and style")
     void rejectNullArguments(){
-
+        TextStyle style = new TextStyle( false, false, "Arial", 12, "black").withBold(true);
+        assertThrows(NullPointerException.class, () -> new TextRun(null, style));
+        assertThrows(NullPointerException.class, () -> new TextRun("sda", null));
     }
     @Test
     @DisplayName("TextRun accepts empty text")
