@@ -59,7 +59,10 @@ class TextRunTest {
     }
     @Test
     @DisplayName("Text run stores and outputs correct text and textStyle")
-    void toStringOuptutsCorrectValues(){
-
+    void toStringOutputsCorrectValues(){
+        TextStyle style = new TextStyle( false, false, "Arial", 12, "black").withBold(true);
+        TextRun run = new TextRun("asa sad", style);
+        String expected = "TextRun[text=asa sad, style=TextStyle[bold=true, italic=false, fontName=Arial, fontSize=12, color=black]]";
+        assertEquals(expected, run.toString());
     }
 }
