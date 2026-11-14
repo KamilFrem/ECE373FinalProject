@@ -51,7 +51,11 @@ class TextRunTest {
     @Test
     @DisplayName("TextRun accepts empty text")
     void acceptsEmptyText(){
-
+        TextStyle style = new TextStyle( false, false, "Arial", 12, "black").withBold(true);
+        TextRun run = new TextRun("", style);
+        assertEquals("", run.getText());
+        assertEquals(0, run.getLength());
+        assertSame(style, run.getStyle());
     }
     @Test
     @DisplayName("Text run stores and outputs correct text and textStyle")
