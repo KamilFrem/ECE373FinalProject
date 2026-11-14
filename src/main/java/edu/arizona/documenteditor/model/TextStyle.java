@@ -6,6 +6,8 @@
 //------------------------------------------------------
 package edu.arizona.documenteditor.model;
 
+import java.util.Objects;
+
 /**
  * Stores immutable formatting values that can be shared by runs
  */
@@ -32,7 +34,16 @@ public final class TextStyle {
      * @throws IllegalArgumentException if font name or color is blank or size is not positive.
      */
     public TextStyle(final boolean bold, final boolean italic, final String fontName, final int fontSize, final String color){
-
+        Objects.requireNonNull(fontName, "Font name cannot be null.");
+        Objects.requireNonNull(color, "Color cannot be null");
+        if (fontName.isBlank() || color.isBlank() || fontSize <= 0){
+            throw new IllegalArgumentException("Font and color cannot be blank; size must be positive");
+        }
+        this.bold = bold;
+        this.italic = italic;
+        this.fontName = fontName;
+        this.fontSize = fontSize;
+        this.color = color;
     }
 
     /**
