@@ -164,12 +164,12 @@ public final class TextStyle {
 
     /**
      * Describe the stored values for debugging
-     * @return TextStyle[bold= boldValue, italic= ItalicValue, fontName= fontNameValue,
-     * fontSize= fontSizeValue, color= colorValue]
+     * @return TextStyle[bold=boldValue, italic=ItalicValue, fontName=fontNameValue,
+     * fontSize=fontSizeValue, color=colorValue]
      */
     @Override
     public String toString(){
-
+        return "TextStyle[bold=" + bold + ", italic=" + italic + ", fontName=" + fontName + ", fontSize=" + fontSize + ", color=" + color + "]";
     }
 
 }
