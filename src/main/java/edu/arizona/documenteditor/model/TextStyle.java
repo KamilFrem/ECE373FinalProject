@@ -52,7 +52,7 @@ public final class TextStyle {
      * @return new generated style
      */
     public TextStyle withBold(final boolean value) {
-
+        return new TextStyle(value, italic, fontName, fontSize, color);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class TextStyle {
      * @return a new generated style
      */
     public TextStyle withItalic(final boolean value){
-
+        return new TextStyle(bold, value, fontName, fontSize, color);
     }
     /**
      * Creates style with requested fontName setting.
@@ -71,7 +71,7 @@ public final class TextStyle {
      * @throws IllegalArgumentException if input String is blank
      */
     public TextStyle withFontName(final String value){
-
+        return new TextStyle(bold, italic, value, fontSize, color);
     }
     /**
      * Creates style with requested size setting.
@@ -80,7 +80,7 @@ public final class TextStyle {
      * @throws IllegalArgumentException if the size of the font is not positive
      */
     public TextStyle withFontSize(final int value){
-
+        return new TextStyle(bold, italic, fontName, value, color);
     }
     /**
      * Creates style with requested color setting.
@@ -90,7 +90,7 @@ public final class TextStyle {
      * @throws IllegalArgumentException if input String is blank
      */
     public TextStyle withColor(final String value){
-
+        return new TextStyle(bold, italic, fontName, fontSize, value);
     }
 
     /**
