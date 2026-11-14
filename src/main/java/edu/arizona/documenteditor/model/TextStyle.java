@@ -159,6 +159,7 @@ public final class TextStyle {
      */
     @Override
     public int hashCode(){
+        return Objects.hash(bold, italic, fontName, fontSize, color);
     }
 
     /**
