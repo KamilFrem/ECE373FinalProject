@@ -86,6 +86,6 @@ public final class TextRun {
      */
     @Override
     public String toString(){
-
+        return "TextRun[text=" + text + ", style=" + style + "]";
     }
 }
