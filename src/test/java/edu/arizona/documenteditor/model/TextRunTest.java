@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Verifies immutable text runs, their validation, and value for different objects to be equal.
@@ -21,7 +20,11 @@ class TextRunTest {
     @Test
     @DisplayName("non-null arguments returns correct values")
     void textRunGetterAndSetterReturnsCorrectValues(){
-
+        TextStyle style = new TextStyle( false, false, "Arial", 12, "black").withBold(true);
+        TextRun run = new TextRun("Hello", style);
+        assertEquals("Hello", run.getText());
+        assertEquals(5, run.getLength());
+        assertSame(style, run.getStyle());
     }
     @Test
     @DisplayName("Independently created text runs are equal if their values are equal")
