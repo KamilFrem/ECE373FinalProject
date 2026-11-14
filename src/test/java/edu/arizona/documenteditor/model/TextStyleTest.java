@@ -53,7 +53,12 @@ public class TextStyleTest {
     @Test
     @DisplayName("String conversion works correctly")
     void toStringReturnsCorrectValues(){
-
+        TextStyle s = new TextStyle(true, false, "Arial", 14, "red");
+        TextStyle a = new TextStyle(false, true, "testFont", 12, "blue");
+        String result1 = "TextStyle[bold= true, italic= false, fontName= Arial, fontSize= 14, color= red]";
+        String result2 = "TextStyle[bold= false, italic= true, fontName= testFont, fontSize= 12, color= blue]";
+        assertEquals(result1, s.toString());
+        assertEquals(result2, a.toString());
     }
 
 }
