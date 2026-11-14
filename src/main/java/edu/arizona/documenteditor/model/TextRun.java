@@ -29,7 +29,7 @@ public final class TextRun {
      * @return the stored text
      */
     public String getText(){
-
+        return text;
     }
 
     /**
@@ -37,15 +37,15 @@ public final class TextRun {
      * @return the style applied to text
      */
     public TextStyle getStyle(){
-
+        return style;
     }
 
     /**
      * Returns the length of the stored text.
      * @return number of characters in text.
      */
-    public int length() {
-
+    public int getLength() {
+        return text.length();
     }
 
     /**
