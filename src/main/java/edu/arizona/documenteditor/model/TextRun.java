@@ -60,7 +60,14 @@ public final class TextRun {
      */
     @Override
     public boolean equals(final Object object){
-
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof TextRun)) {
+            return false;
+        }
+        TextRun other = (TextRun) object;
+        return this.text.equals(other.text) && this.style.equals(other.style);
     }
 
     /**
@@ -70,7 +77,7 @@ public final class TextRun {
      */
     @Override
     public int hashCode(){
-
+        return Objects.hash(text, style);
     }
 
     /**
