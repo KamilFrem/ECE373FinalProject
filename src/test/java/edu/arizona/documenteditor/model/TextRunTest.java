@@ -8,6 +8,12 @@ package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 /**
  * Verifies immutable text runs, their validation, and value for different objects to be equal.
  */
@@ -20,11 +26,17 @@ class TextRunTest {
     @Test
     @DisplayName("Independently created text runs are equal if their values are equal")
     void textRunsHaveValueEqualityAndConsistentHashes(){
+        TextStyle DEFAULT = new TextStyle( false, false, "Arial", 12, "black");
+        TextRun first = new TextRun("abc", DEFAULT);
+        TextRun second = new TextRun("abc", new TextStyle( false, false, "Arial", 12, "black"));
 
-    }
-    @Test
-    @DisplayName("Data access does not modify run or style parameters")
-    void TextStyleAndTextIsNotModifiedWhenAccessed(){
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+
+        assertEquals(1, new HashSet<>(List.of(first,second)).size());
+
+        assertNotEquals(first, new TextRun("abcd", DEFAULT));
+        assertNotEquals(first, new TextRun("abc",DEFAULT.withBold(true)));
     }
     @Test
     @DisplayName("TextRun does not accept null text and style")
