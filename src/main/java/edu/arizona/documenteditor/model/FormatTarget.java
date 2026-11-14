@@ -24,7 +24,7 @@ public interface FormatTarget {
      * Returns the length of the formatting target
      * @return the length, zero for empty text
      */
-    int lenght();
+    int length();
 
     /**
      * Returns the snapshot of the text runs.
