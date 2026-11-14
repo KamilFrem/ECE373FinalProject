@@ -127,6 +127,15 @@ public final class TextStyle {
     }
 
     /**
+     * The object with same values but different initializations will return different hashcodes to make two
+     * objects with same values equal object we need this override.
+     * @return the value-based hashcode
+     */
+    @Override
+    public int hashCode(){
+    }
+
+    /**
      * Describe the stored values for debugging
      * @return TextStyle[bold= boldValue, italic= ItalicValue, fontName= fontNameValue,
      * fontSize= fontSizeValue, color= colorValue]
