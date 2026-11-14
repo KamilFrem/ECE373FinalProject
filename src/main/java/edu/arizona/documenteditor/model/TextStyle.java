@@ -19,10 +19,6 @@ public final class TextStyle {
     private final String color;
     private final int fontSize;
 
-    /** Default value for Text style.
-     * Feel free to delete this part it is just testing purposes
-     */
-    public static final TextStyle DEFAULT = new TextStyle(false, false, "Arial", 12, "black");
 
     /**
      * Creates abd validates an immutable style
