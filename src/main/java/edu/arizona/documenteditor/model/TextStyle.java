@@ -140,7 +140,16 @@ public final class TextStyle {
      */
     @Override
     public boolean equals(final Object object){
-
+        if (this == object){
+            return true;
+        }
+        if(!(object instanceof TextStyle)){
+            return false;
+        }
+        TextStyle other = (TextStyle) object;
+        return this.bold == other.bold && this.italic == other.italic
+                && this.fontName.equals(other.fontName) && this.fontSize == other.fontSize
+                && this.color.equals(other.color);
     }
 
     /**
