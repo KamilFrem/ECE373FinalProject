@@ -40,7 +40,15 @@ public class TextStyleTest {
     @Test
     @DisplayName("Class rejects invalid styles.")
     void rejectsInvalidStyles() {
-
+        TextStyle s = new TextStyle(true, false, "Arial", 14, "red");
+        assertThrows(IllegalArgumentException.class,() -> {s.withFontSize(0);});
+        assertThrows(IllegalArgumentException.class,() -> {s.withFontSize(-12);});
+        assertThrows(IllegalArgumentException.class,() -> {s.withFontName("");});
+        assertThrows(IllegalArgumentException.class,() -> {s.withColor("");});
+        assertThrows(NullPointerException.class, () -> {s.withColor(null);});
+        assertThrows(NullPointerException.class, () -> {s.withFontName(null);});
+        assertThrows(IllegalArgumentException.class,() -> {new TextStyle(true, false, "", 14, "red");});
+        assertThrows(NullPointerException.class,() -> {new TextStyle(true, false, "Ar", 14, null);});
     }
     @Test
     @DisplayName("String conversion works correctly")
