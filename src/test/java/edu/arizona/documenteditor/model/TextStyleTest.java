@@ -28,11 +28,14 @@ public class TextStyleTest {
         assertEquals(12, s.withFontSize(12).getFontSize());
         assertEquals(14, s.getFontSize());
     }
-    
+
     @Test
     @DisplayName("Text styles should only use values for equality.")
     void stylesUseValueEquality(){
-
+        TextStyle s = new TextStyle(true, false, "Arial", 14, "red");
+        TextStyle a = new TextStyle(true, false, "Arial", 14, "red");
+        assertEquals(a, s);
+        assertEquals(a.hashCode(), s.hashCode());
     }
     @Test
     @DisplayName("Class rejects invalid styles.")
