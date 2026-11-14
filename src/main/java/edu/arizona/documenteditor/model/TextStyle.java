@@ -97,31 +97,41 @@ public final class TextStyle {
      * Returns if text is bold
      * @return bold value
      */
-    public boolean isBold(){}
+    public boolean isBold(){
+        return bold;
+    }
 
     /**
      * Returns if text is italic
      * @return italic value
      */
-    public boolean isItalic(){}
+    public boolean isItalic(){
+        return italic;
+    }
 
     /**
      * Returns font name
      * @return fontName value
      */
-    public String getFontName(){}
+    public String getFontName(){
+        return fontName;
+    }
 
     /**
      * Returns size of the font
      * @return fontSize value
      */
-    public int getFontSize(){}
+    public int getFontSize(){
+        return fontSize;
+    }
 
     /**
      * Returns texts color
      * @return color value
      */
-    public String getColor(){}
+    public String getColor(){
+        return color;
+    }
 
     /**
      * Compares all stored values, instead of object itself
