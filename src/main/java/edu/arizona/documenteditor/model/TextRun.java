@@ -6,6 +6,8 @@
 //------------------------------------------------------
 package edu.arizona.documenteditor.model;
 
+import java.util.Objects;
+
 /**
  * Stores immutable text with one shared style
  */
@@ -21,7 +23,10 @@ public final class TextRun {
      * @throws NullPointerException if one of the inputs are null
      */
     public TextRun(final String text, final TextStyle style){
-
+        Objects.requireNonNull(text, "text cannot be null");
+        Objects.requireNonNull(style, "Style cannot be null");
+        this.text = text;
+        this.style = style;
     }
 
     /**
