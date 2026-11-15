@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ParagraphTest {
     private final TextStyle bold = new TextStyle(true, false, "Arial", 12, "black");
@@ -62,7 +61,14 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Empty range is rejected and full range deletions work")
-    void emptyRangesFailAndFullRangesWork(){}
+    void emptyRangesFailAndFullRangesWork(){
+        Paragraph p = new Paragraph("abc");
+        assertThrows(IllegalArgumentException.class, () -> p.deleteText(1, 1));
+        p.insertText(3, "");
+        assertEquals("abc", p.getText());
+        p.deleteText(0, 3);
+        assertTrue(p.getRuns().isEmpty());
+    }
 
     @Test
     @DisplayName("Invalid ranges leave text unchanged")
