@@ -133,7 +133,19 @@ class DocumentTest {
 
     @Test
     @DisplayName("Object based removal only removes requested object")
-    void objectBasedRemovalRemovesOnlyRequestedObject(){}
+    void objectBasedRemovalRemovesOnlyRequestedObject(){
+        Document document = new Document();
+        Section first = new Section("Same name");
+        Section second = new Section("Same name");
+        document.addSection(first);
+        document.addSection(second);
+        document.removeSection(first);
+        assertEquals(List.of(second), document.getSections());
+        assertNull(first.getParent());
+        assertSame(document, second.getParent());
+        document.insertSection(0, first);
+        assertEquals(List.of(first, second), document.getSections());
+    }
 
     @Test
     @DisplayName("Removing non-existing objects and null objects are not accepted")
