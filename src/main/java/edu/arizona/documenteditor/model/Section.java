@@ -47,34 +47,42 @@ public final class Section implements DocumentNode, FormatTarget {
      * @return owner, or {@code null} when detached
      */
     @Override
-    public DocumentNode getParent(){}
+    public DocumentNode getParent(){return parent;}
 
     /**
      * Replaces title text using default style
      * @param value replacement text
      */
-    public void setTitle(final String value){}
+    public void setTitle(final String value){
+        setRuns(List.of(new TextRun(value, DEFAULT_STYLE)));
+    }
 
     /**
      * Returns the stored text without formatting. It is only title
      * @return Title text
      */
     @Override
-    public String getText(){}
+    public String getText(){
+        StringBuilder text = new StringBuilder(titleLength);
+        for (TextRun run : title) {
+            text.append(run.getText());
+        }
+        return text.toString();
+    }
 
     /**
      * Returns the title length
      * @return the number of characters in title
      */
     @Override
-    public int length(){}
+    public int length(){return titleLength;}
 
     /**
      * Returns the snapshot of the text runs from title
      * @return the text runs
      */
     @Override
-    public List<TextRun> getRuns(){}
+    public List<TextRun> getRuns(){return title;}
 
     /**
      * Replaces text and styles
