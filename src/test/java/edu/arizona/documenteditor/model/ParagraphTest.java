@@ -8,6 +8,7 @@ package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -91,7 +92,13 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Copy is independent from original")
-    void CopyIsIndependent(){}
+    void CopyIsIndependent(){
+        Paragraph p = new Paragraph("abc", bold);
+        Paragraph copy = p.deepCopy();
+        copy.deleteText(0, 1);
+        assertEquals("abc", p.getText());
+        assertEquals(List.of(new TextRun("b", bold)), p.slice(1, 2));
+    }
 
     @Test
     @DisplayName("Paragraph can handle 100000 characters")
