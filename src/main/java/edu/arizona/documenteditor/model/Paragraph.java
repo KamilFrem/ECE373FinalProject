@@ -7,7 +7,9 @@
 package edu.arizona.documenteditor.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Stores editable text as immutable runs.
@@ -98,7 +100,29 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws ArithmeticException if the combined text length exceeds integer range.
      */
     @Override
-    public void setRuns(final List<TextRun> values){}
+    public void setRuns(final List<TextRun> values){
+        Objects.requireNonNull(values, "runs");
+
+        List<TextRun> temp = new ArrayList<>();
+        int size = 0;
+        for (TextRun run : values) {
+            Objects.requireNonNull(run, "run");
+
+            size = Math.addExact(size, run.getLength());
+
+            if (run.getLength() == 0) { continue; }
+            int last = temp.size() - 1;
+
+            if (last >= 0 && temp.get(last).getStyle().equals(run.getStyle())) {
+                TextRun previous = temp.remove(last);
+                temp.add(new TextRun(previous.getText() + run.getText(), previous.getStyle()));
+            } else {
+                temp.add(run);
+            }
+        }
+        runs = List.copyOf(temp);
+        length = size;
+    }
 
     /**
      * Copies text and styles into detached graph (no parent).
