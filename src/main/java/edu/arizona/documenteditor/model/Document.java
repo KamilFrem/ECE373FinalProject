@@ -21,13 +21,13 @@ public final class Document implements DocumentNode {
      * @return null
      */
     @Override
-    public Document getParent(){}
+    public Document getParent(){ return null;}
 
     /**
      * Returns the snapshot of the top-level sections list
      * @return top-level sections in document order
      */
-    public List<Section> getSections(){}
+    public List<Section> getSections(){return List.copyOf(sections);}
 
     /**
      * Appends a top level section to the Document
