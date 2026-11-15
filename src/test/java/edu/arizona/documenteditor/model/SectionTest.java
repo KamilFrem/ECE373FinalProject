@@ -206,16 +206,15 @@ class SectionTest {
     }
 
     @Test
-    @DisplayName("Title runs are isolated form changes to the supplied list")
-    void titleRunsAreIsolatedFromInputLists(){}
-
-    @Test
-    @DisplayName("Copying preserves styled titles while allowing independent title replacement")
-    void copiedSectionsCanBeEditedIndependently(){}
-
-    @Test
     @DisplayName("Target stores the text, styles, and length supplied by caller")
-    void storePreparedRuns(){}
+    void storePreparedRuns(){
+        List<TextRun> content = List.of(new TextRun("Hello", bold), new TextRun(" world", DEFAULT_STYLE));
+        Section target = new Section("");
+        target.setRuns(content);
+        assertEquals("Hello world", target.getText());
+        assertEquals(11, target.length());
+        assertEquals(content, target.getRuns());
+    }
 
     @Test
     @DisplayName("Saved runs should stay independent of later assignments")
