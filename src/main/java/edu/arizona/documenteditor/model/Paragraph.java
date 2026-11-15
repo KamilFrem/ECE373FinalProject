@@ -204,7 +204,20 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @return immutable runs from the segment.
      * @throws IndexOutOfBoundsException if bounds are invalid.
      */
-    private List<TextRun> copyRange(final int start, final int end){}
+    private List<TextRun> copyRange(final int start, final int end){
+        checkBounds(start, end);
+        List<TextRun> result = new ArrayList<>();
+        int offset = 0;
+        for (TextRun run : runs) {
+            int left = Math.max(start, offset);
+            int right = Math.min(end, offset + run.getLength());
+            if (left < right) {
+                result.add(new TextRun(run.getText().substring(left - offset, right - offset), run.getStyle()));
+            }
+            offset += run.getLength();
+        }
+        return List.copyOf(result);
+    }
 
     /**
      * Insets text at valid position. uses default style.
