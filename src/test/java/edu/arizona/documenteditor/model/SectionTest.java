@@ -235,6 +235,9 @@ class SectionTest {
 
     @Test
     @DisplayName("Document node can get access to the title text")
-    void exposesTextAsDocumentNode(){}
+    void exposesTextAsDocumentNode(){
+        DocumentNode node = new Section("Heading");
+        assertEquals("Heading", node.getText());
+    }
 
 }
