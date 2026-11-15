@@ -61,14 +61,14 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @return the owning section or {@code null} when no parent exists.
      */
     @Override
-    public Section getParent(){}
+    public Section getParent(){return parent;}
 
     /**
      * Returns the length of the stored text.
      * @return number of characters zero for empty text.
      */
     @Override
-    public int length(){}
+    public int length(){return length;}
 
     /**
      * Returns an immutable snapshot of the text runs.
@@ -76,14 +76,18 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @return the text runs.
      */
     @Override
-    public List<TextRun> getRuns(){}
+    public List<TextRun> getRuns(){return runs;}
 
     /**
      * Returns the text stored in paragraph without preserving the style and formatting values.
      * @return text available in paragraph.
      */
     @Override
-    public String getText(){}
+    public String getText(){
+        StringBuilder result = new StringBuilder(length);
+        for (TextRun run : runs) { result.append(run.getText()); }
+        return result.toString();
+    }
 
     /**
      * Replaces text and styles after validating the complete list.
