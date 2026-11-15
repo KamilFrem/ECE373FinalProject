@@ -151,7 +151,28 @@ public final class Document implements DocumentNode {
      * Collects all paragraphs in document order, excluding section titles.
      * @return all paragraphs in document
      */
-    public List<Paragraph> getParagraphs(){}
+    public List<Paragraph> getParagraphs(){
+
+        List<Paragraph> result = new ArrayList<>();
+        Deque<DocumentNode> pending = new ArrayDeque<>();
+
+        for (int i = sections.size() - 1; i >= 0; i--) {
+            pending.push(sections.get(i));
+        }
+        while (!pending.isEmpty()) {
+            DocumentNode node = pending.pop();
+            if (node instanceof Paragraph paragraph) {
+                result.add(paragraph);
+            }
+            else if (node instanceof Section section) {
+                List<DocumentNode> children = section.getChildren();
+                for (int i = children.size() - 1; i >= 0; i--) {
+                    pending.push(children.get(i));
+                }
+            }
+        }
+        return List.copyOf(result);
+    }
 
     /**
      * Copies the complete structure, text, and styles.
