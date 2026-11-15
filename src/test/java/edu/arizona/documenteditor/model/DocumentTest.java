@@ -100,7 +100,19 @@ class DocumentTest {
 
     @Test
     @DisplayName("deepCopy and getParagraphs can handle deeply nested document")
-    void deeplyNestedTraversal(){}
+    void deeplyNestedTraversal(){
+        Section root = new Section("leaf");
+        root.addChild(new Paragraph("deep"));
+        for (int i = 0; i < 5000; i++) {
+            Section parent = new Section("level");
+            parent.addChild(root);
+            root = parent;
+        }
+        Document d = new Document();
+        d.addSection(root);
+        assertEquals("deep", d.getParagraphs().get(0).getText());
+        assertEquals("deep", d.deepCopy().getParagraphs().get(0).getText());
+    }
 
     @Test
     @DisplayName("getText includes nested content in order")
