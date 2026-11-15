@@ -34,7 +34,9 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @param text initial paragraph text.
      * @throws NullPointerException if input is null.
      */
-    public Paragraph(final String text){}
+    public Paragraph(final String text){
+        this(text, new TextStyle(false, false, "Arial", 12, "black"));
+    }
 
     /**
      * Creates a detached paragraph with user defined initial text and style.
@@ -42,7 +44,9 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @param style initial text style.
      * @throws NullPointerException if one of the inputs are null.
      */
-    public Paragraph(final String text, final TextStyle style){}
+    public Paragraph(final String text, final TextStyle style){
+        setRuns(List.of(new TextRun(text, style)));
+    }
 
     /**
      * Creates a detached paragraph from a copy of runs. This allows multiple styles in one paragraph.
@@ -50,7 +54,7 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws NullPointerException if input is null.
      * @throws ArithmeticException if the combined text length exceeds the integer range.
      */
-    public Paragraph(final List<TextRun> initialRuns){}
+    public Paragraph(final List<TextRun> initialRuns){ setRuns(initialRuns); }
 
     /**
      * Returns the section that owns this paragraph.
