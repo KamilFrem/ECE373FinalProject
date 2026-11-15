@@ -164,7 +164,29 @@ class DocumentTest {
 
     @Test
     @DisplayName("Copy and restore preserve nested titles and body formatting")
-    void copyAndRestorePreserveDocumentStructure(){}
+    void copyAndRestorePreserveDocumentStructure(){
+        Document document = new Document();
+        Section section = new Section("Title");
+        Section nested = new Section("Nested");
+        Paragraph body = new Paragraph("Body", DEFAULT_STYLE.withColor("blue"));
+        section.setRuns(List.of(new TextRun("Title", bold)));
+        nested.setRuns(List.of(new TextRun("Nested", DEFAULT_STYLE.withItalic(true))));
+        nested.addChild(body);
+        section.addChild(nested);
+        document.addSection(section);
+        Document snapshot = document.deepCopy();
+        section.setTitle("Changed");
+        body.deleteText(0, 4);
+        document.restore(snapshot);
+        Section restored = document.getSections().get(0);
+        Section restoredNested = (Section) restored.getChildren().get(0);
+        assertEquals("Title\nNested\nBody", document.getText());
+        assertTrue(restored.getRuns().get(0).getStyle().isBold());
+        assertTrue(restoredNested.getRuns().get(0).getStyle().isItalic());
+        assertEquals("blue", document.getParagraphs().get(0).getRuns().get(0).getStyle().getColor());
+        restoredNested.setTitle("Changed again");
+        assertEquals("Title\nNested\nBody", snapshot.getText());
+    }
 
     @Test
     @DisplayName("setSection check all incoming sections before changing the existing roots")
