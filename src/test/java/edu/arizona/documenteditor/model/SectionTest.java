@@ -8,6 +8,7 @@ package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -218,7 +219,19 @@ class SectionTest {
 
     @Test
     @DisplayName("Saved runs should stay independent of later assignments")
-    void savedRunsRemainsIndependent(){}
+    void savedRunsRemainsIndependent(){
+        Section target = new Section("");
+        List<TextRun> input = new ArrayList<>(List.of(new TextRun("Before", DEFAULT_STYLE)));
+        target.setRuns(input);
+        input.clear();
+        List<TextRun> before = target.getRuns();
+        assertThrows(UnsupportedOperationException.class, before::clear);
+        target.setRuns(List.of(new TextRun("After", DEFAULT_STYLE.withItalic(true))));
+        assertEquals("Before", before.get(0).getText());
+        target.setRuns(before);
+        assertEquals("Before", target.getText());
+        assertFalse(target.getRuns().get(0).getStyle().isItalic());
+    }
 
     @Test
     @DisplayName("Document node can get access to the title text")
