@@ -116,7 +116,20 @@ class DocumentTest {
 
     @Test
     @DisplayName("getText includes nested content in order")
-    void getTextReturnsTextInOrder(){}
+    void getTextReturnsTextInOrder(){
+        Document document = new Document();
+        Section first = new Section("First");
+        Section nested = new Section("Nested");
+        Paragraph body = new Paragraph("Body", bold);
+        List<TextRun> original = body.getRuns();
+        nested.addChild(body);
+        first.addChild(nested);
+        first.addChild(new Paragraph("Last paragraph"));
+        document.addSection(first);
+        document.addSection(new Section("Second"));
+        assertEquals("First\nNested\nBody\nLast paragraph\nSecond", document.getText());
+        assertEquals(original, body.getRuns());
+    }
 
     @Test
     @DisplayName("Object based removal only removes requested object")
