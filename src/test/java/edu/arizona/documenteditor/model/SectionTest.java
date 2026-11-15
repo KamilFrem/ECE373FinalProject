@@ -13,6 +13,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SectionTest {
+    private final TextStyle bold = new TextStyle(true, false, "Arial", 12, "black");
+    private final TextStyle DEFAULT_STYLE = new TextStyle(false, false, "Arial", 12, "black");
+
     @Test
     @DisplayName("Section preserves mixed child order and parent")
     void preservesMixedChildOrderAndParents() {
@@ -65,7 +68,15 @@ class SectionTest {
 
     @Test
     @DisplayName("Title can have mixed styles")
-    void titleWithMixedStyles(){}
+    void titleWithMixedStyles(){
+        Section s = new Section("Title"); s.setRuns(List.of(new TextRun("T", DEFAULT_STYLE),
+                new TextRun("itl", DEFAULT_STYLE.withBold(true).withFontSize(18)),
+                new TextRun("e", DEFAULT_STYLE)));
+        assertEquals("Title", s.getText());
+        assertTrue(s.getRuns().get(1).getStyle().isBold());
+        assertEquals(18, s.getRuns().get(1).getStyle().getFontSize());
+        assertTrue(s.getChildren().isEmpty());
+    }
 
     @Test
     @DisplayName("Unsupported node is rejected before modifying child list")
