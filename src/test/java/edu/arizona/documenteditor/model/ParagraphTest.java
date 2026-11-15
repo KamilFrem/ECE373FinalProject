@@ -102,7 +102,20 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Paragraph can handle 100000 characters")
-    void handlesOneHundredThousandChar(){}
+    void handlesOneHundredThousandChar(){
+        Paragraph p = new Paragraph("abcde".repeat(20000));
+        p.setRuns(List.of(new TextRun("abcde".repeat(2000), DEFAULT_STYLE),
+                new TextRun("abcde".repeat(16000), bold),
+                new TextRun("abcde".repeat(2000), DEFAULT_STYLE)));
+        assertEquals(100000, p.length());
+        assertEquals(3, p.getRuns().size());
+        List<TextRun> selected = p.slice(10000, 20000);
+        p.deleteText(10000, 20000);
+        p.insertRuns(p.length(), selected);
+        assertEquals(100000, p.length());
+        assertEquals("abcde".repeat(20000), p.getText());
+        assertEquals(bold, p.getRuns().get(p.getRuns().size() - 1).getStyle());
+    }
 
     @Test
     @DisplayName("Paragraph Split returns detached Suffix and preserves styles")
