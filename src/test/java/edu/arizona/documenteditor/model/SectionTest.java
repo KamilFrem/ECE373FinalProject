@@ -28,7 +28,17 @@ class SectionTest {
 
     @Test
     @DisplayName("Rejects cycle document architecture and duplicate ownerships")
-    void rejectCyclesAndDuplicateOwnerships(){}
+    void rejectCyclesAndDuplicateOwnerships(){
+        Section root = new Section("Root");
+        Section sub = new Section("Sub");
+        root.addChild(sub);
+        assertThrows(IllegalArgumentException.class, () -> sub.addChild(root));
+        assertThrows(IllegalArgumentException.class, () -> root.addChild(root));
+        assertThrows(IllegalArgumentException.class, () -> root.addChild(new Document()));
+        assertThrows(IllegalArgumentException.class, () -> new Section("Other").addChild(sub));
+        assertEquals(List.of(sub), root.getChildren());
+        assertTrue(sub.getChildren().isEmpty());
+    }
 
     @Test
     @DisplayName("Removal detaches and allows reattachment")
