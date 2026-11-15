@@ -190,16 +190,71 @@ class DocumentTest {
 
     @Test
     @DisplayName("setSection check all incoming sections before changing the existing roots")
-    void invalidSectionReplacementRejected(){}
+    void invalidSectionReplacementRejected(){
+        Document document = new Document();
+        Section current = new Section("Current");
+        document.addSection(current);
+        Document other = new Document();
+        Section foreign = new Section("Foreign");
+        other.addSection(foreign);
+        Section candidate = new Section("Candidate");
+        assertThrows(IllegalArgumentException.class, () -> document.setSections(List.of(candidate, foreign)));
+        assertThrows(IllegalArgumentException.class, () -> document.setSections(List.of(current, current)));
+        assertThrows(NullPointerException.class, () -> document.setSections(null));
+        assertThrows(NullPointerException.class, () -> document.setSections(java.util.Arrays.asList(candidate, null)));
+        assertEquals(List.of(current), document.getSections());
+        assertSame(document, current.getParent());
+        assertSame(other, foreign.getParent());
+        assertNull(candidate.getParent());
+    }
 
     @Test
     @DisplayName("Clearing and restoring sections preserves their nested sections and paragraphs")
-    void savedSectionListCanUndoSectionRemoval(){}
+    void savedSectionListCanUndoSectionRemoval(){
+        Document document = new Document();
+        Section root = new Section("Root");
+        Paragraph paragraph = new Paragraph("Body");
+        root.addChild(paragraph);
+        document.addSection(root);
+        List<Section> saved = document.getSections();
+        document.setSections(List.of());
+        assertTrue(document.getSections().isEmpty());
+        assertNull(root.getParent());
+        document.setSections(saved);
+        assertSame(root, document.getSections().get(0));
+        assertSame(paragraph, document.getParagraphs().get(0));
+        assertSame(root, paragraph.getParent());
+    }
 
     @Test
     @DisplayName("Undoing a restoration can revive object referenced by an earlier edit command")
     void restorationAlsoRestoresEarlierCommandTargets(){
-
+        Document document = new Document();
+        Section root = new Section("Title");
+        Paragraph target = new Paragraph("A");
+        root.addChild(target);
+        document.addSection(root);
+        Document checkpoint = document.deepCopy();
+        List<TextRun> beforeEdit = target.getRuns();
+        target.insertText(1, "B");
+        List<TextRun> afterEdit = target.getRuns();
+        List<Section> beforeRestore = document.getSections();
+        document.restore(checkpoint);
+        List<Section> afterRestore = document.getSections();
+        assertEquals("A", document.getParagraphs().get(0).getText());
+        assertNotSame(target, document.getParagraphs().get(0));
+        document.setSections(beforeRestore);
+        assertSame(target, document.getParagraphs().get(0));
+        assertEquals("AB", target.getText());
+        target.setRuns(beforeEdit);
+        assertEquals("A", document.getParagraphs().get(0).getText());
+        target.setRuns(afterEdit);
+        document.setSections(afterRestore);
+        assertEquals("A", document.getParagraphs().get(0).getText());
+        document.setSections(beforeRestore);
+        assertSame(target, document.getParagraphs().get(0));
+        assertEquals("AB", target.getText());
+        assertEquals("A", checkpoint.getParagraphs().get(0).getText());
     }
 
 }
