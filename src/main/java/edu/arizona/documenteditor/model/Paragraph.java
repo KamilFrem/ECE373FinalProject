@@ -137,7 +137,11 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @param end exclusive end index.
      * @throws IndexOutOfBoundsException if the range is outside the text.
      */
-    private void checkBounds(final int start, final int end){}
+    private void checkBounds(final int start, final int end){
+        if (start < 0 || end < start || end > length) {
+            throw new IndexOutOfBoundsException("Invalid range");
+        }
+    }
 
     /**
      * Validates a nonempty selection.
@@ -146,7 +150,12 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if the bounds are invalid.
      * @throws IllegalArgumentException if the range is empty.
      */
-    private void checkRangeIsNotEmpty(final int start, final int end){}
+    private void checkRangeIsNotEmpty(final int start, final int end){
+        checkBounds(start, end);
+        if (start == end) {
+            throw new IllegalArgumentException("Text range must not be empty");
+        }
+    }
 
     /**
      * Copies selected range into styled runs without changing paragraph content.
