@@ -116,7 +116,15 @@ class SectionTest {
 
     @Test
     @DisplayName("Trying to remove non-existing child does not change section structure")
-    void removingAbsentChildDoesNotChangeStructure(){}
+    void removingAbsentChildDoesNotChangeStructure(){
+        Section section = new Section("S");
+        Paragraph existing = new Paragraph("body");
+        section.addChild(existing);
+        assertThrows(IllegalArgumentException.class, () -> section.removeChild(new Paragraph("body")));
+        assertThrows(NullPointerException.class, () -> section.removeChild((DocumentNode) null));
+        assertEquals(List.of(existing), section.getChildren());
+        assertSame(section, existing.getParent());
+    }
 
     @Test
     @DisplayName("Setting empty title is allowed")
