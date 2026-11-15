@@ -46,7 +46,11 @@ class ParagraphTest {
 
     @Test
     @DisplayName("replaceText replaces with user defined styles")
-    void replaceWithStyle(){}
+    void replaceWithStyle(){
+        Paragraph p = new Paragraph("abcdef");
+        p.replaceText(1, 5, "X", bold);
+        assertEquals("aXf", p.getText()); assertEquals(bold, p.getRuns().get(1).getStyle());
+    }
 
     @Test
     @DisplayName("Insertion without style uses default style")
