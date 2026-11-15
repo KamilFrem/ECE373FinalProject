@@ -7,12 +7,22 @@
 package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class ParagraphTest {
     private final TextStyle bold = new TextStyle(true, false, "Arial", 12, "black");
+    private final TextStyle DEFAULT_STYLE = new TextStyle(false, false, "Arial", 12, "black");
 
     @Test
     @DisplayName("Empty paragraph should not store any Text Runs")
-    void emptyParagraphHasNoRuns(){}
+    void emptyParagraphHasNoRuns(){
+        Paragraph p = new Paragraph();
+        assertEquals("", p.getText());
+        assertEquals(0, p.length());
+        assertTrue(p.getRuns().isEmpty());
+    }
 
     @Test
     @DisplayName("Can insert text to the both end of the text run list")
