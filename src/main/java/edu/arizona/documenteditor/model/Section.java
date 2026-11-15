@@ -25,7 +25,7 @@ public final class Section implements DocumentNode, FormatTarget {
     /** Total Title length. */
     private int titleLength;
     /** Direct paragraphs and subsections in document order. */
-    private final List<DocumentNode> childeren = new ArrayList<>();
+    private final List<DocumentNode> children = new ArrayList<>();
     /** Default title style */
     private final TextStyle DEFAULT_STYLE = new TextStyle(true, false, "Arial", 16, "black");
 
@@ -34,13 +34,13 @@ public final class Section implements DocumentNode, FormatTarget {
      * @param title text for section title
      * @throws NullPointerException if input is null
      */
-    public Section(final String title){}
+    public Section(final String title){setTitle(title);}
     /**
      * Creates a detached section with a text run title and no children.
      * @param title text runs with different styles
      * @throws NullPointerException if input is null
      */
-    public Section(final List<TextRun> title){}
+    public Section(final List<TextRun> title){setRuns(title);}
 
     /**
      * Returns the document or section that owns this section
@@ -91,7 +91,7 @@ public final class Section implements DocumentNode, FormatTarget {
      * Returns and snapshot og the direct children in document order.
      * @return paragraphs and nested sections in their order
      */
-    public List<DocumentNode> getChilderen(){}
+    public List<DocumentNode> getChildren(){}
 
     /**
      * Appends detached section or paragraph
