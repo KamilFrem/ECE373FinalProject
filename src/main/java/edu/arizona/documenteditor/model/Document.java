@@ -97,7 +97,27 @@ public final class Document implements DocumentNode {
      * @throws NullPointerException if the list or section is null
      * @throws IllegalArgumentException if a section occurs more than once or belongs somewhere else.
      */
-    public void setSections(final List<Section> replacement){}
+    public void setSections(final List<Section> replacement){
+        List<Section> prepared = List.copyOf(Objects.requireNonNull(replacement, "replacement cannot be null"));
+        java.util.Set<Section> seen = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<Section, Boolean>());
+        for (Section section : prepared) {
+            if (!seen.add(section)) {
+                throw new IllegalArgumentException("A section cannot appear twice");
+            }
+            if (section.getParent() != null && section.getParent() != this) {
+                throw new IllegalArgumentException("Section belongs to another container");
+            }
+        }
+        for (Section section : sections) {
+            section.parent = null;
+        }
+        sections.clear();
+        for (Section section : prepared) {
+            sections.add(section);
+            section.parent = this;
+        }
+    }
 
     /**
      * Returns all titles and paragraphs in document order, separated by new lines
@@ -105,7 +125,9 @@ public final class Document implements DocumentNode {
      * @return the document text
      */
     @Override
-    public String getText(){}
+    public String getText(){
+
+    }
 
     /**
      * Collects all paragraphs in document order, excluding section titles.
