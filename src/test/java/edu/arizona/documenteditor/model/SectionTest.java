@@ -138,7 +138,12 @@ class SectionTest {
 
     @Test
     @DisplayName("Invalid title change request leaves text and styles unchanged")
-    void invalidTitleChangeLeavesTextAndStyleUnchanged(){}
+    void invalidTitleChangeLeavesTextAndStyleUnchanged(){
+        FormatTarget target = new Section("Title");
+        List<TextRun> before = target.getRuns();
+        assertThrows(NullPointerException.class, () -> target.setRuns(java.util.Arrays.asList(new TextRun("x", DEFAULT_STYLE), null)));
+        assertEquals(before, target.getRuns());
+    }
 
     @Test
     @DisplayName("A command can undo split by removing its new child and restoring saved runs")
