@@ -153,7 +153,20 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Paragraph merge preserve source paragraph and does not remove childeren")
-    void paragraphMergePreservesSource(){}
+    void paragraphMergePreservesSource(){
+        Section section = new Section("S");
+        Paragraph first = new Paragraph("abc");
+        Paragraph second = new Paragraph("def", DEFAULT_STYLE.withBold(true));
+        section.addChild(first);
+        section.addChild(second);
+        List<TextRun> source = second.getRuns();
+        first.merge(second);
+        assertEquals("abcdef", first.getText());
+        assertTrue(first.getRuns().get(1).getStyle().isBold());
+        assertEquals(source, second.getRuns());
+        assertEquals(List.of(first, second), section.getChildren());
+        assertSame(section, second.getParent());
+    }
 
     @Test
     @DisplayName("Invalid paragraph merge does not change content")
