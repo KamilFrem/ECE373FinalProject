@@ -64,7 +64,11 @@ public final class Document implements DocumentNode {
      * @return the detached section
      * @throws IndexOutOfBoundsException if the index is out of section list
      */
-    public Section removeSection(final int index){}
+    public Section removeSection(final int index){
+        Section removed = sections.remove(index);
+        removed.parent = null;
+        return removed;
+    }
 
     /**
      * Removes a section by its identity
@@ -72,7 +76,14 @@ public final class Document implements DocumentNode {
      * @throws NullPointerException if the input section is null
      * @throws IllegalArgumentException if the section is not a top-level member
      */
-    public void removeSection(final Section section){}
+    public void removeSection(final Section section){
+        Objects.requireNonNull(section, "section");
+        int index = sections.indexOf(section);
+        if (index < 0) {
+            throw new IllegalArgumentException("Section is not a top-level member of this document");
+        }
+        removeSection(index);
+    }
 
     /**
      * Replaces ordered top-level sections without copying.
