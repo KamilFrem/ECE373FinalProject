@@ -29,11 +29,31 @@ class DocumentTest {
 
     @Test
     @DisplayName("Rejects duplicate ownerships")
-    void rejectDuplicateOwnership(){}
+    void rejectDuplicateOwnership(){
+        Document d = new Document(); Section s = new Section("S");
+        d.addSection(s);
+        assertThrows(IllegalArgumentException.class, () -> d.addSection(s));
+        assertThrows(IllegalArgumentException.class, () -> new Document().addSection(s));
+        assertSame(s, d.removeSection(0));
+        assertNull(s.getParent());
+    }
 
     @Test
     @DisplayName("getParagraphs travels nested childs in order without getting SectionTitles")
-    void getParagraphsInOrderWithoutTitles(){}
+    void getParagraphsInOrderWithoutTitles(){
+        Document d = new Document();
+        Section a = new Section("A");
+        Section b = new Section("B");
+        Paragraph one = new Paragraph("1");
+        Paragraph two = new Paragraph("2");
+        Paragraph three = new Paragraph("3");
+        a.addChild(one);
+        a.addChild(b);
+        b.addChild(two);
+        a.addChild(three);
+        d.addSection(a);
+        assertEquals(List.of(one, two, three), d.getParagraphs());
+    }
 
     @Test
     @DisplayName("Deep Copy copies all mutable content independently")
