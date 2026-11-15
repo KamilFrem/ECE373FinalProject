@@ -190,7 +190,14 @@ public final class Section implements DocumentNode, FormatTarget {
      * @param node section or paragraph whose link is updated
      * @param owner new section owner, or null when detaching
      */
-    private static void setParent(final DocumentNode node, final Section owner){}
+    private static void setParent(final DocumentNode node, final Section owner){
+        if(node instanceof Section section){
+            section.parent = owner;
+        }
+        else if(node instanceof Paragraph paragraph) {
+            paragraph.parent = owner;
+        }
+    }
 
     /**
      * Copies the title and every descendant into an independent, detached section.
