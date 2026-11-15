@@ -164,7 +164,11 @@ public final class Section implements DocumentNode, FormatTarget {
      * @return the detached child
      * @throws IndexOutOfBoundsException if the index does not identify a child
      */
-    public DocumentNode removeChild(final int index){}
+    public DocumentNode removeChild(final int index){
+        DocumentNode removed = children.remove(index);
+        setParent(removed, null);
+        return removed;
+    }
 
     /**
      * Removes a direct child by object identity and detaches it.
@@ -172,7 +176,14 @@ public final class Section implements DocumentNode, FormatTarget {
      * @throws NullPointerException if a required argument is null
      * @throws IllegalArgumentException if the node is not a direct child
      */
-    public void removeChild(final DocumentNode child){}
+    public void removeChild(final DocumentNode child){
+        Objects.requireNonNull(child, "child");
+        int index = children.indexOf(child);
+        if (index < 0) {
+            throw new IllegalArgumentException("Node is not a direct child of this section");
+        }
+        removeChild(index);
+    }
 
     /**
      * Updates an internal parent link after a validated structural change.
