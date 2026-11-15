@@ -149,7 +149,18 @@ class DocumentTest {
 
     @Test
     @DisplayName("Removing non-existing objects and null objects are not accepted")
-    void nullAndAbsentObjectRemovalRejected(){}
+    void nullAndAbsentObjectRemovalRejected(){
+        Document document = new Document();
+        Section top = new Section("Top");
+        Section nested = new Section("Nested");
+        top.addChild(nested);
+        document.addSection(top);
+        assertThrows(IllegalArgumentException.class, () -> document.removeSection(nested));
+        assertThrows(IllegalArgumentException.class, () -> document.removeSection(new Section("Top")));
+        assertThrows(NullPointerException.class, () -> document.removeSection((Section) null));
+        assertEquals(List.of(top), document.getSections());
+        assertSame(top, nested.getParent());
+    }
 
     @Test
     @DisplayName("Copy and restore preserve nested titles and body formatting")
