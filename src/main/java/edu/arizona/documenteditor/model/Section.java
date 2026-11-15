@@ -6,9 +6,7 @@
 //------------------------------------------------------
 package edu.arizona.documenteditor.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A section can own ordered mixture of paragraphs and nested sections.
@@ -106,7 +104,8 @@ public final class Section implements DocumentNode, FormatTarget {
             if (last >= 0 && temp.get(last).getStyle().equals(run.getStyle())) {
                 TextRun previous = temp.remove(last);
                 temp.add(new TextRun(previous.getText() + run.getText(), previous.getStyle()));
-            } else {
+            }
+            else {
                 temp.add(run);
             }
         }
@@ -205,5 +204,35 @@ public final class Section implements DocumentNode, FormatTarget {
      * @return the detached copy with correctly connected descendant parents
      */
     @Override
-    public Section deepCopy(){}
+    public Section deepCopy(){
+        Section result = new Section(title);
+
+        Deque<Section> sources = new ArrayDeque<>();
+        Deque<Section> targets = new ArrayDeque<>();
+
+        sources.push(this);
+        targets.push(result);
+
+        while (!sources.isEmpty()) {
+            Section source = sources.pop();
+            Section target = targets.pop();
+
+            for (DocumentNode child : source.children) {
+                if (child instanceof Paragraph paragraph) {
+                    Paragraph copy = paragraph.deepCopy();
+                    target.children.add(copy);
+                    copy.parent = target;
+
+                }
+                else if (child instanceof Section section) {
+                    Section copy = new Section(section.title);
+                    target.children.add(copy);
+                    copy.parent = target;
+                    sources.push(section);
+                    targets.push(copy);
+                }
+            }
+        }
+        return result;
+    }
 }
