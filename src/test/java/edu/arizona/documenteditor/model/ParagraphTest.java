@@ -54,7 +54,11 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Insertion without style uses default style")
-    void insertionWithoutStyle(){}
+    void insertionWithoutStyle(){
+        Paragraph p = new Paragraph("ab", bold);
+        p.insertText(1, "X");
+        assertEquals(DEFAULT_STYLE, p.getRuns().get(1).getStyle());
+    }
 
     @Test
     @DisplayName("Empty range is rejected and full range deletions work")
