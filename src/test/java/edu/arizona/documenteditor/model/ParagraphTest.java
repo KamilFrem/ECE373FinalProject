@@ -170,7 +170,12 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Invalid paragraph merge does not change content")
-    void invalidMergeDoesNotChangeContent(){}
+    void invalidMergeDoesNotChangeContent(){
+        Paragraph paragraph = new Paragraph("keep");
+        assertThrows(IllegalArgumentException.class, () -> paragraph.merge(paragraph));
+        assertThrows(NullPointerException.class, () -> paragraph.merge(null));
+        assertEquals("keep", paragraph.getText());
+    }
 
     @Test
     @DisplayName("Empty selections are rejected without changing content")
