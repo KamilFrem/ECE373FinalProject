@@ -179,7 +179,19 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Empty selections are rejected without changing content")
-    void rejectEmptySelections(){}
+    void rejectEmptySelections(){
+        for (int position : new int[]{0, 1, 3}) {
+            Paragraph paragraph = new Paragraph("abc", DEFAULT_STYLE.withBold(true));
+            Paragraph destination = new Paragraph("target");
+            List<TextRun> before = paragraph.getRuns();
+            assertThrows(IllegalArgumentException.class, () -> paragraph.slice(position, position));
+            assertThrows(IllegalArgumentException.class, () -> paragraph.deleteText(position, position));
+            assertThrows(IllegalArgumentException.class, () -> paragraph.replaceText(position, position, "x"));
+            assertThrows(IllegalArgumentException.class, () -> paragraph.replaceRuns(position, position, List.of()));
+            assertEquals(before, paragraph.getRuns());
+            assertEquals("target", destination.getText());
+        }
+    }
 
     @Test
     @DisplayName("Null inputs are rejected and content does not change")
