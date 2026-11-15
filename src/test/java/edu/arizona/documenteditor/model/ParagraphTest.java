@@ -119,7 +119,21 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Paragraph Split returns detached Suffix and preserves styles")
-    void splitReturnsSuffixAndPreservesStyle(){}
+    void splitReturnsSuffixAndPreservesStyle(){
+        Section section = new Section("S");
+        Paragraph paragraph = new Paragraph("abcdef");
+        paragraph.setRuns(List.of(new TextRun("a", DEFAULT_STYLE),
+                new TextRun("bcde", DEFAULT_STYLE.withItalic(true)), new TextRun("f", DEFAULT_STYLE)));
+        List<TextRun> prefix = paragraph.slice(0, 3);
+        List<TextRun> suffix = paragraph.slice(3, 6);
+        section.addChild(paragraph);
+        Paragraph result = paragraph.split(3);
+        assertEquals(prefix, paragraph.getRuns());
+        assertEquals(suffix, result.getRuns());
+        assertNull(result.getParent());
+        assertSame(section, paragraph.getParent());
+        assertEquals(List.of(paragraph), section.getChildren());
+    }
 
     @Test
     @DisplayName("Paragraph Split supports edhes and Validates before split")
