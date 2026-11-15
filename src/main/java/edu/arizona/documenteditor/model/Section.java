@@ -8,6 +8,7 @@ package edu.arizona.documenteditor.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A section can own ordered mixture of paragraphs and nested sections.
@@ -93,7 +94,25 @@ public final class Section implements DocumentNode, FormatTarget {
      * @throws ArithmeticException if the combined text length is greater than integer range
      */
     @Override
-    public void setRuns(final List<TextRun> values){}
+    public void setRuns(final List<TextRun> values){
+        Objects.requireNonNull(values, "runs");
+        List<TextRun> temp = new ArrayList<>();
+        int size = 0;
+        for (TextRun run : values) {
+            Objects.requireNonNull(run, "run");
+            size = Math.addExact(size, run.getLength());
+            if (run.getLength() == 0) { continue; }
+            int last = temp.size() - 1;
+            if (last >= 0 && temp.get(last).getStyle().equals(run.getStyle())) {
+                TextRun previous = temp.remove(last);
+                temp.add(new TextRun(previous.getText() + run.getText(), previous.getStyle()));
+            } else {
+                temp.add(run);
+            }
+        }
+        title = List.copyOf(temp);
+        titleLength = size;
+    }
 
     /**
      * Returns and snapshot og the direct children in document order.
