@@ -243,7 +243,9 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if the range is outside the text.
      * @throws NullPointerException if the input text is null.
      */
-    public void insertText(final int position, final String text){}
+    public void insertText(final int position, final String text){
+        insertText(position, text, DEFAULT_STYLE);
+    }
 
     /**
      * Insets text at valid position. uses user provided style.
@@ -253,7 +255,9 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if the range is outside the text.
      * @throws NullPointerException if one of the input is null.
      */
-    public void insertText(final int position, final String text, final TextStyle style){}
+    public void insertText(final int position, final String text, final TextStyle style){
+        insertRuns(position, List.of(new TextRun(text, style)));
+    }
 
     /**
      * Deletes a range while preserving styles on the remaining text.
