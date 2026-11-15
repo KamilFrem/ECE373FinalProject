@@ -194,7 +194,16 @@ class SectionTest {
 
     @Test
     @DisplayName("invalid Split operation does not remove or change existing children")
-    void invalidSplitLeavesHierarchUnchanged(){}
+    void invalidSplitLeavesHierarchUnchanged(){
+        Section section = new Section("Title");
+        Paragraph first = new Paragraph("abc");
+        section.addChild(first);
+        Paragraph prepared = first.deepCopy();
+        assertThrows(IndexOutOfBoundsException.class, () -> prepared.split(4));
+        assertEquals("abc", first.getText());
+        assertEquals(List.of(first), section.getChildren());
+        assertSame(section, first.getParent());
+    }
 
     @Test
     @DisplayName("Title runs are isolated form changes to the supplied list")
