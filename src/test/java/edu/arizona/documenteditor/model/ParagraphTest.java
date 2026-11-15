@@ -83,7 +83,11 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Null replacement does not delet the text")
-    void nullReplacementsRejectedWhileOriginalTextPreserved(){}
+    void nullReplacementsRejectedWhileOriginalTextPreserved(){
+        Paragraph p = new Paragraph("abc");
+        assertThrows(NullPointerException.class, () -> p.replaceText(0, 3, null));
+        assertEquals("abc", p.getText());
+    }
 
     @Test
     @DisplayName("Copy is independent from original")
