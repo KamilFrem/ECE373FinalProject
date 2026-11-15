@@ -100,7 +100,19 @@ class SectionTest {
 
     @Test
     @DisplayName("Object based child removal supports undo")
-    void objectBasedChildRemovalSupportsUndo(){}
+    void objectBasedChildRemovalSupportsUndo(){
+        Section section = new Section("S");
+        Paragraph first = new Paragraph("Same text");
+        Paragraph second = new Paragraph("Same text");
+        section.addChild(first);
+        section.addChild(second);
+        section.removeChild(first);
+        assertEquals(List.of(second), section.getChildren());
+        assertNull(first.getParent());
+        section.insertChild(0, first);
+        assertEquals(List.of(first, second), section.getChildren());
+        assertSame(section, first.getParent());
+    }
 
     @Test
     @DisplayName("Trying to remove non-existing child does not change section structure")
