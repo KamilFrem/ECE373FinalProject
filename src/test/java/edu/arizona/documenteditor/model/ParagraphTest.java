@@ -206,6 +206,13 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Paragraph can store text, styles, and length")
-    void storesPreparedRuns(){}
+    void storesPreparedRuns(){
+        List<TextRun> content = List.of(new TextRun("Hello", bold), new TextRun(" world", DEFAULT_STYLE));
+        Paragraph target = new Paragraph();
+        target.setRuns(content);
+        assertEquals("Hello world", target.getText());
+        assertEquals(11, target.length());
+        assertEquals(content, target.getRuns());
+    }
 
 }
