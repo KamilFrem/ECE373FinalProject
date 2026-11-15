@@ -55,7 +55,13 @@ class SectionTest {
 
     @Test
     @DisplayName("Invalid insertion does not attach")
-    void rejectInvalidInsertion(){}
+    void rejectInvalidInsertion(){
+        Section s = new Section("S");
+        Paragraph p = new Paragraph();
+        assertThrows(IndexOutOfBoundsException.class, () -> s.insertChild(1, p));
+        assertNull(p.getParent());
+        assertTrue(s.getChildren().isEmpty());
+    }
 
     @Test
     @DisplayName("Title can have mixed styles")
