@@ -72,7 +72,14 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Invalid ranges leave text unchanged")
-    void invalidRangeLeaveTextUnchanged(){}
+    void invalidRangeLeaveTextUnchanged(){
+        Paragraph p = new Paragraph("abc", bold);
+        for (int[] range : new int[][]{{-1, 1}, {2, 1}, {0, 4}}) {
+            assertThrows(IndexOutOfBoundsException.class, () -> p.deleteText(range[0], range[1]));
+        }
+        assertThrows(IndexOutOfBoundsException.class, () -> p.insertText(4, "d"));
+        assertEquals(List.of(new TextRun("abc", bold)), p.getRuns());
+    }
 
     @Test
     @DisplayName("Null replacement does not delet the text")
