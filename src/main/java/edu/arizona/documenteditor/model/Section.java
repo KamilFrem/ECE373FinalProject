@@ -118,7 +118,7 @@ public final class Section implements DocumentNode, FormatTarget {
      * Returns and snapshot og the direct children in document order.
      * @return paragraphs and nested sections in their order
      */
-    public List<DocumentNode> getChildren(){}
+    public List<DocumentNode> getChildren(){return List.copyOf(children);}
 
     /**
      * Appends detached section or paragraph
@@ -127,7 +127,7 @@ public final class Section implements DocumentNode, FormatTarget {
      * @throws NullPointerException if input is null
      * @throws IllegalArgumentException if the node is not a section, paragraph, has parent, or creates a cycle
      */
-    public void addChild(final DocumentNode child){}
+    public void addChild(final DocumentNode child){insertChild(children.size(), child);}
 
     /**
      * inserts detached section or paragraph
