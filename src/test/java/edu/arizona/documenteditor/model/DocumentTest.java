@@ -68,7 +68,7 @@ class DocumentTest {
         s.addChild(nested);
         d.addSection(s);
         s.setRuns(List.of(new TextRun("Title", bold)));
-        Document copy = d.deepCopy(); 
+        Document copy = d.deepCopy();
         Section cs = copy.getSections().get(0);
         assertNotSame(s, cs);
         assertSame(copy, cs.getParent());
@@ -82,7 +82,21 @@ class DocumentTest {
 
     @Test
     @DisplayName("Restore does not change snapshot and detaches old children")
-    void restoreDoesNotChangeSnapshot(){}
+    void restoreDoesNotChangeSnapshot(){
+        Document d = new Document();
+        Section s = new Section("S");
+        s.addChild(new Paragraph("before"));
+        d.addSection(s);
+        Document snapshot = d.deepCopy();
+        d.getParagraphs().get(0).insertText(0, "edit");
+        d.restore(snapshot);
+        assertNull(s.getParent());
+        assertEquals("before", d.getParagraphs().get(0).getText());
+        d.getParagraphs().get(0).insertText(0, "new");
+        assertEquals("before", snapshot.getParagraphs().get(0).getText());
+        d.restore(d);
+        assertEquals("newbefore", d.getParagraphs().get(0).getText());
+    }
 
     @Test
     @DisplayName("deepCopy and getParagraphs can handle deeply nested document")
