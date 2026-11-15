@@ -178,7 +178,13 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if bounds are invalid.
      * @throws NullPointerException if input runs are null.
      */
-    private void splice(final int start, final int end, final List<TextRun> replacement){}
+    private void splice(final int start, final int end, final List<TextRun> replacement){
+        checkBounds(start, end);
+        List<TextRun> result = new ArrayList<>(copyRange(0, start));
+        result.addAll(Objects.requireNonNull(replacement, "replacement"));
+        result.addAll(copyRange(end, length));
+        setRuns(result);
+    }
 
     /**
      * Keeps the part of the paragraph stored before position in this Paragraph object and returns the other half as
@@ -187,7 +193,12 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @return the detached later half of the paragraph.
      * @throws IndexOutOfBoundsException if the split offset is outside the paragraph.
      */
-    public Paragraph split(final int position){}
+    public Paragraph split(final int position){
+        checkBounds(position, position);
+        Paragraph suffix = new Paragraph(copyRange(position, length));
+        splice(position, length, List.of());
+        return suffix;
+    }
 
     /**
      * Appends supplied paragraph. It does not delete or change the supplied paragraph it only appends text and textStyle.
