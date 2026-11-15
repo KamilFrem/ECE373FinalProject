@@ -147,7 +147,26 @@ class SectionTest {
 
     @Test
     @DisplayName("A command can undo split by removing its new child and restoring saved runs")
-    void splitSupportsUndoAndRedoWithSameChild(){}
+    void splitSupportsUndoAndRedoWithSameChild(){
+        Section section = new Section("Title");
+        Paragraph first = new Paragraph("abcdef", bold);
+        section.addChild(first);
+        List<TextRun> original = first.getRuns();
+        int index = section.getChildren().indexOf(first);
+        Paragraph suffix = first.split(3);
+        List<TextRun> prefix = first.getRuns();
+        section.insertChild(index + 1, suffix);
+        assertEquals("abc", first.getText());
+        assertEquals("def", suffix.getText());
+        section.removeChild(suffix);
+        first.setRuns(original);
+        assertEquals(List.of(first), section.getChildren());
+        assertNull(suffix.getParent());
+        first.setRuns(prefix);
+        section.insertChild(index + 1, suffix);
+        assertSame(suffix, section.getChildren().get(1));
+        assertEquals("abcdef", first.getText() + suffix.getText());
+    }
 
     @Test
     @DisplayName("Merge method supports undo and redo without replacing nodes")
