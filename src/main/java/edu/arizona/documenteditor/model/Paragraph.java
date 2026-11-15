@@ -9,6 +9,11 @@ package edu.arizona.documenteditor.model;
 
 import java.util.List;
 
+/**
+ * Stores editable text as immutable runs.
+ * All ranges are zero based and end exclusive
+ * Command classes will coordinate the undo and redo operations this class only creates paragraph
+ */
 public final class Paragraph implements DocumentNode,FormatTarget {
     /** Stores section that owns this paragraph. */
     Section parent;
