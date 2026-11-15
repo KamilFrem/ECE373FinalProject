@@ -304,7 +304,10 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws NullPointerException if one of the inputs is null.
      * @throws IllegalArgumentException if the selected range is empty.
      */
-    public void replaceRuns(final int start, final int end, final List<TextRun> replacement){}
+    public void replaceRuns(final int start, final int end, final List<TextRun> replacement){
+        checkRangeIsNotEmpty(start, end);
+        splice(start, end, replacement);
+    }
 
     /**
      * Inserts styled runs at a position, including into an empty paragraph.
@@ -313,5 +316,7 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if the position is invalid.
      * @throws NullPointerException if the list or a run is null.
      */
-    public void insertRuns(final int position, final List<TextRun> inserted){}
+    public void insertRuns(final int position, final List<TextRun> inserted){
+        splice(position, position, inserted);
+    }
 }
