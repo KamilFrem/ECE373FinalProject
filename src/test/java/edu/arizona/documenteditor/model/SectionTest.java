@@ -7,7 +7,7 @@
 package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-public class SectionTest {
+class SectionTest {
     @Test
     @DisplayName("Section preserves mixed child order and parent")
     void preservesMixedChildOrderAndParents() {}
@@ -79,5 +79,5 @@ public class SectionTest {
     @Test
     @DisplayName("Document node can get access to the title text")
     void exposesTextAsDocumentNode(){}
-    
+
 }

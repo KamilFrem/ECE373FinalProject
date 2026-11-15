@@ -7,7 +7,7 @@
 package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-public class ParagraphTest {
+class ParagraphTest {
     private final TextStyle bold = new TextStyle(true, false, "Arial", 12, "black");
 
     @Test
@@ -73,7 +73,7 @@ public class ParagraphTest {
     @Test
     @DisplayName("Null inputs are rejected and content does not change")
     void nullIsRejected(){}
-    
+
     @Test
     @DisplayName("Paragraph can store text, styles, and length")
     void storesPreparedRuns(){}
