@@ -170,7 +170,27 @@ class SectionTest {
 
     @Test
     @DisplayName("Merge method supports undo and redo without replacing nodes")
-    void mergeSupportUndoRedoWithoutReplacingNode(){}
+    void mergeSupportUndoRedoWithoutReplacingNode(){
+        Section section = new Section("Title");
+        Paragraph first = new Paragraph("abc");
+        Paragraph second = new Paragraph("def", DEFAULT_STYLE.withItalic(true));
+        section.addChild(first);
+        section.addChild(second);
+        List<TextRun> before = first.getRuns();
+        int index = section.getChildren().indexOf(second);
+        first.merge(second);
+        section.removeChild(second);
+        assertEquals("abcdef", first.getText());
+        assertNull(second.getParent());
+        first.setRuns(before);
+        section.insertChild(index, second);
+        assertEquals("abc", first.getText());
+        assertSame(second, section.getChildren().get(index));
+        first.merge(second);
+        section.removeChild(second);
+        assertEquals("abcdef", first.getText());
+        assertEquals(List.of(first), section.getChildren());
+    }
 
     @Test
     @DisplayName("invalid Split operation does not remove or change existing children")
