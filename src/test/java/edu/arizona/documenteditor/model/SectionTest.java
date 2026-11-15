@@ -7,10 +7,24 @@
 package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class SectionTest {
     @Test
     @DisplayName("Section preserves mixed child order and parent")
-    void preservesMixedChildOrderAndParents() {}
+    void preservesMixedChildOrderAndParents() {
+        Section s = new Section("Title");
+        Paragraph p = new Paragraph("one");
+        Section sub = new Section("Sub");
+        s.addChild(p);
+        s.insertChild(0, sub);
+        assertEquals(List.of(sub, p), s.getChildren());
+        assertSame(s, p.getParent());
+        assertSame(s, sub.getParent());
+    }
 
     @Test
     @DisplayName("Rejects cycle document architecture and duplicate ownerships")
