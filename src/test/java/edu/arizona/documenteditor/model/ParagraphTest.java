@@ -195,7 +195,14 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Null inputs are rejected and content does not change")
-    void nullIsRejected(){}
+    void nullIsRejected(){
+        Paragraph paragraph = new Paragraph("abc");
+        List<TextRun> before = paragraph.getRuns();
+        assertThrows(NullPointerException.class, () -> paragraph.replaceText(0, 1, null));
+        assertThrows(NullPointerException.class, () -> paragraph.replaceRuns(0, 1, null));
+        assertThrows(NullPointerException.class, () -> paragraph.insertRuns(0, null));
+        assertEquals(before, paragraph.getRuns());
+    }
 
     @Test
     @DisplayName("Paragraph can store text, styles, and length")
