@@ -80,7 +80,23 @@ class SectionTest {
 
     @Test
     @DisplayName("Unsupported node is rejected before modifying child list")
-    void regularInterfaceCannotBypassSupportedChildValidation(){}
+    void regularInterfaceCannotBypassSupportedChildValidation(){
+        DocumentNode customNode = new DocumentNode() {
+            @Override
+            public String getText() { return "custom"; }
+            @Override
+            public DocumentNode getParent() { return null; }
+            @Override
+            public DocumentNode deepCopy() { return this; }
+        };
+        Section section = new Section("Title");
+        Paragraph existing = new Paragraph("body");
+        section.addChild(existing);
+        assertThrows(IllegalArgumentException.class, () -> section.addChild(customNode));
+        assertEquals(List.of(existing), section.getChildren());
+        assertSame(section, existing.getParent());
+        assertNull(customNode.getParent());
+    }
 
     @Test
     @DisplayName("Object based child removal supports undo")
