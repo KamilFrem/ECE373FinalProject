@@ -7,11 +7,25 @@
 package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class DocumentTest {
 
     @Test
     @DisplayName("Can create empty document and order Sections")
-    void creatEmptyDocThenOrderSection(){}
+    void creatEmptyDocThenOrderSection(){
+        Document d = new Document();
+        assertTrue(d.getSections().isEmpty());
+        assertNull(d.getParent());
+        Section a = new Section("A");
+        Section b = new Section("B");
+        d.addSection(a); d.insertSection(0, b);
+        assertEquals(List.of(b, a), d.getSections());
+        assertSame(d, a.getParent()); assertThrows(UnsupportedOperationException.class, () -> d.getSections().clear());
+    }
 
     @Test
     @DisplayName("Rejects duplicate ownerships")
@@ -56,9 +70,9 @@ class DocumentTest {
     @Test
     @DisplayName("Clearing and restoring sections preserves their nested sections and paragraphs")
     void savedSectionListCanUndoSectionRemoval(){}
-    
+
     @Test
-    @DisplayName("Undoing a restoration can revive object referenced by an erlier edit command")
+    @DisplayName("Undoing a restoration can revive object referenced by an earlier edit command")
     void restorationAlsoRestoresEarlierCommandTargets(){
 
     }
