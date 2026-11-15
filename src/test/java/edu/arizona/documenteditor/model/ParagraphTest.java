@@ -26,7 +26,13 @@ class ParagraphTest {
 
     @Test
     @DisplayName("Can insert text to the both end of the text run list")
-    void insertBothEnd(){}
+    void insertBothEnd(){
+        Paragraph p = new Paragraph("middle");
+        p.insertText(0, "<");
+        p.insertText(p.length(), ">");
+        assertEquals("<middle>", p.getText());
+        assertEquals(1, p.getRuns().size());
+    }
 
     @Test
     @DisplayName("deletes can delete across runs while preserving the text style")
