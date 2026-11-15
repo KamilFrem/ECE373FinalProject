@@ -138,7 +138,25 @@ public final class Section implements DocumentNode, FormatTarget {
      * @throws IllegalArgumentException if the node is not a section, paragraph, has parent, or creates a cycle
      * @throws IndexOutOfBoundsException if the insertion index is not within limits of the child list.
      */
-    public void insertChild(final int index, final DocumentNode child){}
+    public void insertChild(final int index, final DocumentNode child){
+        if (index < 0 || index > children.size()) { throw new IndexOutOfBoundsException("Index cannot be outside of bounds"); }
+
+        Objects.requireNonNull(child, "child that will be added cannot be null");
+
+        if (!(child instanceof Section) && !(child instanceof Paragraph)) {
+            throw new IllegalArgumentException("Child must be a paragraph or section");
+        }
+
+        if (child.getParent() != null) {
+            throw new IllegalArgumentException("Child must be a detached paragraph or section");
+        }
+
+        for (DocumentNode ancestor = this; ancestor != null; ancestor = ancestor.getParent()) {
+            if (ancestor == child) { throw new IllegalArgumentException("Cycle in document tree"); }
+        }
+        children.add(index, child);
+        setParent(child, this);
+    }
 
     /**
      * Removes and detaches the child at the supplied index.
