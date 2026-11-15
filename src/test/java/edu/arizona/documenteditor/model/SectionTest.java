@@ -42,7 +42,16 @@ class SectionTest {
 
     @Test
     @DisplayName("Removal detaches and allows reattachment")
-    void removalDetachesAndAllowsReattachment(){}
+    void removalDetachesAndAllowsReattachment(){
+        Section a = new Section("A");
+        Section b = new Section("B");
+        Paragraph p = new Paragraph("x");
+        a.addChild(p);
+        assertSame(p, a.removeChild(0));
+        assertNull(p.getParent());
+        b.addChild(p);
+        assertSame(b, p.getParent());
+    }
 
     @Test
     @DisplayName("Invalid insertion does not attach")
