@@ -181,7 +181,7 @@ public final class Paragraph implements DocumentNode,FormatTarget {
     private void splice(final int start, final int end, final List<TextRun> replacement){
         checkBounds(start, end);
         List<TextRun> result = new ArrayList<>(copyRange(0, start));
-        result.addAll(Objects.requireNonNull(replacement, "replacement"));
+        result.addAll(Objects.requireNonNull(replacement, "replacement must not be null"));
         result.addAll(copyRange(end, length));
         setRuns(result);
     }
@@ -206,7 +206,13 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws NullPointerException if input paragraph is null.
      * @throws IllegalArgumentException if second paragraph is same paragraph as merged one.
      */
-    public void merge(final Paragraph secondParagraph){}
+    public void merge(final Paragraph secondParagraph){
+        Objects.requireNonNull(secondParagraph, "second paragraph cannot be null");
+        if (secondParagraph == this) {
+            throw new IllegalArgumentException("Cannot merge a paragraph with itself");
+        }
+        insertRuns(length, secondParagraph.getRuns());
+    }
 
     /**
      * Copies internal text segment.
