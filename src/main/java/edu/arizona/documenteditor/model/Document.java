@@ -8,6 +8,7 @@ package edu.arizona.documenteditor.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Owns ordered top-level sections and supports independent document copies.
@@ -35,7 +36,7 @@ public final class Document implements DocumentNode {
      * @throws NullPointerException if input is null
      * @throws IllegalArgumentException if the section already has parent
      */
-    public void addSection(final Section section){}
+    public void addSection(final Section section){insertSection(sections.size(), section);}
 
     /**
      * Insets a detached section to specified index
@@ -45,7 +46,17 @@ public final class Document implements DocumentNode {
      * @throws IllegalArgumentException if the section already has parent
      * @throws IndexOutOfBoundsException ig the insertion index is outside the section list
      */
-    public void insertSection(final int index, final Section section){}
+    public void insertSection(final int index, final Section section){
+        if (index < 0 || index > sections.size()) {
+            throw new IndexOutOfBoundsException(index);
+        }
+        Objects.requireNonNull(section, "section cannot be null");
+        if (section.getParent() != null) {
+            throw new IllegalArgumentException("Section already has a parent");
+        }
+        sections.add(index, section);
+        section.parent = this;
+    }
 
     /**
      * Removes section and returns it
