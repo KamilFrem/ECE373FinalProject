@@ -165,7 +165,10 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if the range is out of bounds.
      * @throws IllegalArgumentException if the selected range is empty.
      */
-    public List<TextRun> slice(final int start, final int end){}
+    public List<TextRun> slice(final int start, final int end){
+        checkRangeIsNotEmpty(start, end);
+        return copyRange(start, end);
+    }
 
     /**
      * Builds and replaces segment of text runs with supplied text runs.
