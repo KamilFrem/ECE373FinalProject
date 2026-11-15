@@ -8,6 +8,8 @@ package edu.arizona.documenteditor.model;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,7 +38,11 @@ class ParagraphTest {
 
     @Test
     @DisplayName("deletes can delete across runs while preserving the text style")
-    void deleteAcrossRuns(){}
+    void deleteAcrossRuns(){
+        Paragraph p = new Paragraph(List.of(new TextRun("abc", bold), new TextRun("def", DEFAULT_STYLE)));
+        p.deleteText(1, 5);
+        assertEquals(List.of(new TextRun("a", bold), new TextRun("f", DEFAULT_STYLE)), p.getRuns());
+    }
 
     @Test
     @DisplayName("replaceText replaces with user defined styles")
