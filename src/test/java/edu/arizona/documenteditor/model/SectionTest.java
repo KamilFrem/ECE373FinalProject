@@ -128,7 +128,13 @@ class SectionTest {
 
     @Test
     @DisplayName("Setting empty title is allowed")
-    void emptyTitleRemainsValid(){}
+    void emptyTitleRemainsValid(){
+        Section section = new Section("");
+        section.setTitle("New");
+        assertEquals("New", section.getText());
+        section.setTitle("");
+        assertEquals("", section.getText());
+    }
 
     @Test
     @DisplayName("Invalid title change request leaves text and styles unchanged")
