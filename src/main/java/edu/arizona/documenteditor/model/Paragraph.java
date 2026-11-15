@@ -266,7 +266,7 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws IndexOutOfBoundsException if the range is outside the text or start exceeds end.
      * @throws IllegalArgumentException if the selected range is empty.
      */
-    public void deleteText(final int start, final int end){}
+    public void deleteText(final int start, final int end){replaceRuns(start, end, List.of());}
 
     /**
      * Replaces a range with new text. With default style.
@@ -277,7 +277,9 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws NullPointerException if a required argument is null.
      * @throws IllegalArgumentException if the selected range is empty.
      */
-    public void replaceText(final int start, final int end, final String text){}
+    public void replaceText(final int start, final int end, final String text){
+        replaceText(start, end, text, DEFAULT_STYLE);
+    }
 
     /**
      * Replaces a range with new text. With user defined style.
@@ -289,7 +291,9 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @throws NullPointerException if a required argument is null.
      * @throws IllegalArgumentException if the selected range is empty.
      */
-    public void replaceText(final int start, final int end, final String text, final TextStyle style){}
+    public void replaceText(final int start, final int end, final String text, final TextStyle style){
+        replaceRuns(start, end, List.of(new TextRun(text, style)));
+    }
 
     /**
      * Replaces range with styled runs.
