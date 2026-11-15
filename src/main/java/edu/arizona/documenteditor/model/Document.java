@@ -6,9 +6,7 @@
 //------------------------------------------------------
 package edu.arizona.documenteditor.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Owns ordered top-level sections and supports independent document copies.
@@ -126,7 +124,27 @@ public final class Document implements DocumentNode {
      */
     @Override
     public String getText(){
+        StringJoiner text = new StringJoiner("\n");
+        Deque<DocumentNode> pending = new ArrayDeque<>();
 
+        for (int i = sections.size() - 1; i >= 0; i--) {
+            pending.push(sections.get(i));
+        }
+
+        while (!pending.isEmpty()) {
+
+            DocumentNode node = pending.pop();
+            text.add(node.getText());
+
+            if (node instanceof Section section) {
+                List<DocumentNode> children = section.getChildren();
+
+                for (int i = children.size() - 1; i >= 0; i--) {
+                    pending.push(children.get(i));
+                }
+            }
+        }
+        return text.toString();
     }
 
     /**
