@@ -179,13 +179,24 @@ public final class Document implements DocumentNode {
      * @return an independent document for checkpoint storage
      */
     @Override
-    public Document deepCopy(){}
+    public Document deepCopy(){
+        Document copy = new Document();
+        for (Section section : sections) {
+            copy.addSection(section.deepCopy());
+        }
+        return copy;
+    }
 
     /**
      * Replaces this root's contents with and independent copy of the supplied Document
      * @param snapshot document state
      * @throws NullPointerException if a required argument is null.
      */
-    public void restore(final Document snapshot){}
+    public void restore(final Document snapshot){
+        Document copy = Objects.requireNonNull(snapshot, "snapshot cannot be empty").deepCopy();
+        List<Section> incoming = copy.getSections();
+        copy.setSections(List.of());
+        setSections(incoming);
+    }
 
 }
