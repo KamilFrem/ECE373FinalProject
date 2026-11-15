@@ -13,6 +13,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DocumentTest {
+    private final TextStyle bold = new TextStyle(true, false, "Arial", 12, "black");
+    private final TextStyle DEFAULT_STYLE = new TextStyle(false, false, "Arial", 12, "black");
 
     @Test
     @DisplayName("Can create empty document and order Sections")
@@ -57,7 +59,26 @@ class DocumentTest {
 
     @Test
     @DisplayName("Deep Copy copies all mutable content independently")
-    void copiesAllContentIndependently(){}
+    void copiesAllContentIndependently(){
+        Document d = new Document();
+        Section s = new Section("Title");
+        Section nested = new Section("Nested");
+        Paragraph p = new Paragraph("abc");
+        nested.addChild(p);
+        s.addChild(nested);
+        d.addSection(s);
+        s.setRuns(List.of(new TextRun("Title", bold)));
+        Document copy = d.deepCopy(); 
+        Section cs = copy.getSections().get(0);
+        assertNotSame(s, cs);
+        assertSame(copy, cs.getParent());
+        assertEquals(s.getRuns(), cs.getRuns());
+        copy.getParagraphs().get(0).replaceText(0, 3, "changed");
+        cs.setTitle("Other");
+        assertEquals("abc", p.getText());
+        assertEquals("Title", s.getText());
+        assertSame(cs, cs.getChildren().get(0).getParent());
+    }
 
     @Test
     @DisplayName("Restore does not change snapshot and detaches old children")
