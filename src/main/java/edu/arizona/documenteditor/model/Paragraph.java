@@ -129,7 +129,7 @@ public final class Paragraph implements DocumentNode,FormatTarget {
      * @return an independent parent with no parent.
      */
     @Override
-    public Paragraph deepCopy(){}
+    public Paragraph deepCopy(){return new Paragraph(runs);}
 
     /**
      * Validates a range without changing content.
