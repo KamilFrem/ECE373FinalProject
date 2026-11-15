@@ -136,8 +136,20 @@ class ParagraphTest {
     }
 
     @Test
-    @DisplayName("Paragraph Split supports edhes and Validates before split")
-    void splitSupportsEdgesAndValidatesBeforeChanging(){}
+    @DisplayName("Paragraph Split supports edges and Validates before split")
+    void splitSupportsEdgesAndValidatesBeforeChanging(){
+        for (int position : new int[]{0, 3}) {
+            Paragraph paragraph = new Paragraph("abc");
+            Paragraph suffix = paragraph.split(position);
+            assertEquals("abc".substring(0, position), paragraph.getText());
+            assertEquals("abc".substring(position), suffix.getText());
+        }
+        Paragraph paragraph = new Paragraph("abc");
+        assertThrows(IndexOutOfBoundsException.class, () -> paragraph.split(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> paragraph.split(4));
+        assertEquals("abc", paragraph.getText());
+        assertEquals("", new Paragraph().split(0).getText());
+    }
 
     @Test
     @DisplayName("Paragraph merge preserve source paragraph and does not remove childeren")
