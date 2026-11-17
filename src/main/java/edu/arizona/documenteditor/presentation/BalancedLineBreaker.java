@@ -2,15 +2,18 @@ package edu.arizona.documenteditor.presentation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-// Wraps text by minimizing squared unused space across all lines.
-
+/**
+ * Wraps text by minimizing the sum of squared unused spaces on all lines.
+ */
 public final class BalancedLineBreaker implements LineBreaker {
 
+    /** {@inheritDoc} */
     @Override
     public List<String> breakLines(String text, int width) {
-        Objects.requireNonNull(text, "Text cannot be null.");
+        if (text == null) {
+            throw new NullPointerException("Text cannot be null.");
+        }
 
         if (width <= 0) {
             throw new IllegalArgumentException("Width must be positive.");
@@ -22,63 +25,69 @@ public final class BalancedLineBreaker implements LineBreaker {
             return lines;
         }
 
+        // Split the text at spaces, tabs, or other whitespace.
         String[] words = text.strip().split("\\s+");
-        int count = words.length;
+        int wordCount = words.length;
 
-        for (String word : words) {
-            if (word.length() > width) {
+        for (int i = 0; i < wordCount; i++) {
+            if (words[i].length() > width) {
                 throw new IllegalArgumentException("A word is longer than the selected width.");
             }
         }
 
-        // bestCost[i] is the minimum cost of wrapping words i onward.
-        double[] bestCost = new double[count + 1];
+        // bestCost[i] is the lowest cost for wrapping from word i to the end.
+        double[] bestCost = new double[wordCount + 1];
 
-        // nextBreak[i] identifies the first word on the following line.
-        int[] nextBreak = new int[count];
+        // nextLineStart[i] is where the next line starts if this line starts at i.
+        int[] nextLineStart = new int[wordCount];
 
-        for (int start = count - 1; start >= 0; start--) {
+        // There is no cost when there are no words left.
+        bestCost[wordCount] = 0;
+
+        for (int start = wordCount - 1; start >= 0; start--) {
             bestCost[start] = Double.POSITIVE_INFINITY;
             long lineLength = 0;
 
-            for (int end = start; end < count; end++) {
+            for (int end = start; end < wordCount; end++) {
+                // Count the space before each word after the first one.
                 if (end > start) {
-                    lineLength++;
+                    lineLength = lineLength + 1;
                 }
 
-                lineLength += words[end].length();
+                lineLength = lineLength + words[end].length();
 
                 if (lineLength > width) {
                     break;
                 }
 
-                double unused = width - lineLength;
-                double cost = unused * unused + bestCost[end + 1];
+                double unusedSpace = width - lineLength;
+                double lineCost = unusedSpace * unusedSpace;
+                double totalCost = lineCost + bestCost[end + 1];
 
-                if (cost < bestCost[start]) {
-                    bestCost[start] = cost;
-                    nextBreak[start] = end + 1;
+                if (totalCost < bestCost[start]) {
+                    bestCost[start] = totalCost;
+                    nextLineStart[start] = end + 1;
                 }
             }
         }
 
-        // Reconstruct the lines using the selected break positions.
+        // Start at the first word and follow the saved line breaks.
         int start = 0;
 
-        while (start < count) {
-            int end = nextBreak[start];
+        while (start < wordCount) {
+            int nextStart = nextLineStart[start];
             StringBuilder line = new StringBuilder();
 
-            for (int index = start; index < end; index++) {
-                if (index > start) {
-                    line.append(' ');
+            for (int i = start; i < nextStart; i++) {
+                if (i > start) {
+                    line.append(" ");
                 }
 
-                line.append(words[index]);
+                line.append(words[i]);
             }
 
             lines.add(line.toString());
-            start = end;
+            start = nextStart;
         }
 
         return lines;

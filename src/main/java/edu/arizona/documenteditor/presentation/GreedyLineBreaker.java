@@ -2,16 +2,16 @@ package edu.arizona.documenteditor.presentation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-/**
- * Wraps text by fitting as many complete words as possible on each line.
- */
+/** Wraps text by fitting as many complete words as possible on each line. */
 public final class GreedyLineBreaker implements LineBreaker {
 
+    /** {@inheritDoc} */
     @Override
     public List<String> breakLines(String text, int width) {
-        Objects.requireNonNull(text, "Text cannot be null.");
+        if (text == null) {
+            throw new NullPointerException("Text cannot be null.");
+        }
 
         if (width <= 0) {
             throw new IllegalArgumentException("Width must be positive.");
@@ -26,27 +26,32 @@ public final class GreedyLineBreaker implements LineBreaker {
         String[] words = text.strip().split("\\s+");
         StringBuilder currentLine = new StringBuilder();
 
-        for (String word : words) {
-            if (word.length() > width) {
-                throw new IllegalArgumentException(
-                        "A word is longer than the selected width.");
-            }
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
 
-            // Include the separating space when checking whether the word fits.
-            if (currentLine.length() > 0
-                    && currentLine.length() + 1 + word.length() > width) {
-                lines.add(currentLine.toString());
-                currentLine.setLength(0);
+            if (word.length() > width) {
+                throw new IllegalArgumentException( "A word is longer than the selected width.");
             }
 
             if (currentLine.length() > 0) {
-                currentLine.append(' ');
+                // Count the space between the current text and the next word.
+                long newLength = currentLine.length();
+                newLength = newLength + 1 + word.length();
+
+                if (newLength > width) {
+                    lines.add(currentLine.toString());
+                    currentLine.setLength(0);
+                }
+            }
+
+            if (currentLine.length() > 0) {
+                currentLine.append(" ");
             }
 
             currentLine.append(word);
         }
 
-        // Save the final line, which has no following word to trigger a flush.
+        // The loop ends with the last line still in currentLine.
         if (currentLine.length() > 0) {
             lines.add(currentLine.toString());
         }
