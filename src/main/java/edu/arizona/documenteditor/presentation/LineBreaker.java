@@ -8,11 +8,14 @@ import java.util.List;
 public interface LineBreaker {
 
     /**
-     * Wraps paragraph text using the requested line width.
+     * Wraps text using the requested line width.
      *
-     * text paragraph text to wrap
-     * width maximum characters per line
-     * return the resulting lines
+     * @param text the text to wrap
+     * @param width the maximum characters per line
+     * @return the wrapped lines
+     * @throws NullPointerException if text is null
+     * @throws IllegalArgumentException if width is not positive
+     *         or a word is longer than width
      */
     List<String> breakLines(String text, int width);
 
