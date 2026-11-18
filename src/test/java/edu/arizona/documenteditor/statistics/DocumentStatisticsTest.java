@@ -1,5 +1,7 @@
 package edu.arizona.documenteditor.statistics;
 
+import edu.arizona.documenteditor.checkpoint.CheckpointManager;
+import edu.arizona.documenteditor.checkpoint.RestoreCheckpointCommand;
 import edu.arizona.documenteditor.command.InsertTextCommand;
 import edu.arizona.documenteditor.engine.DocumentEngine;
 import edu.arizona.documenteditor.model.Document;
@@ -8,6 +10,7 @@ import edu.arizona.documenteditor.model.Section;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DocumentStatisticsTest {
 
@@ -22,15 +25,16 @@ class DocumentStatisticsTest {
     }
 
     @Test
-    void countsTitlesAndParagraphText() {
+    void countsSectionTitleAndParagraph() {
         Document document = new Document();
         Section section = new Section("Intro");
-        section.addChild(new Paragraph("Hello world"));
+        Paragraph paragraph = new Paragraph("Hello world");
+
+        section.addChild(paragraph);
         document.addSection(section);
 
         DocumentStatistics statistics = new DocumentStatistics(document);
 
-        // "Intro" has 5 characters; "Hello world" has 11.
         assertEquals(3, statistics.getWordCount());
         assertEquals(16, statistics.getCharacterCount());
         assertEquals(1, statistics.getParagraphCount());
@@ -40,15 +44,15 @@ class DocumentStatisticsTest {
     void countsNestedSectionsAndEmptyParagraphs() {
         Document document = new Document();
 
-        Section section = new Section("Main");
-        section.addChild(new Paragraph("One two"));
+        Section mainSection = new Section("Main");
+        mainSection.addChild(new Paragraph("One two"));
 
-        Section nested = new Section("Sub");
-        nested.addChild(new Paragraph("Three"));
-        nested.addChild(new Paragraph(""));
+        Section nestedSection = new Section("Sub");
+        nestedSection.addChild(new Paragraph("Three"));
+        nestedSection.addChild(new Paragraph(""));
 
-        section.addChild(nested);
-        document.addSection(section);
+        mainSection.addChild(nestedSection);
+        document.addSection(mainSection);
 
         DocumentStatistics statistics = new DocumentStatistics(document);
 
@@ -58,22 +62,68 @@ class DocumentStatisticsTest {
     }
 
     @Test
-    void handlesExtraWhitespace() {
+    void countsWhitespaceAsCharactersButNotWords() {
         Document document = new Document();
         Section section = new Section("Intro");
+
         section.addChild(new Paragraph("  Hello\tworld  "));
         document.addSection(section);
 
         DocumentStatistics statistics = new DocumentStatistics(document);
 
-        // Stored spaces and the tab count as characters.
         assertEquals(3, statistics.getWordCount());
         assertEquals(20, statistics.getCharacterCount());
         assertEquals(1, statistics.getParagraphCount());
     }
 
     @Test
-    void updatesAfterEditUndoAndRedo() {
+    void countsAWhitespaceOnlyParagraph() {
+        Document document = new Document();
+        Section section = new Section("");
+
+        section.addChild(new Paragraph(" \t\n "));
+        document.addSection(section);
+
+        DocumentStatistics statistics = new DocumentStatistics(document);
+
+        assertEquals(0, statistics.getWordCount());
+        assertEquals(4, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
+    }
+
+    @Test
+    void rejectsANullDocument() {
+        assertThrows(
+                NullPointerException.class,
+                () -> new DocumentStatistics(null));
+    }
+
+    @Test
+    void recalculatesInsteadOfAddingToPreviousCounts() {
+        Document document = new Document();
+        Section section = new Section("Intro");
+
+        section.addChild(new Paragraph("Hello"));
+        document.addSection(section);
+
+        DocumentStatistics statistics = new DocumentStatistics(document);
+
+        statistics.onDocumentChanged(document);
+        statistics.onDocumentChanged(document);
+
+        assertEquals(2, statistics.getWordCount());
+        assertEquals(10, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
+
+        statistics.onDocumentChanged(new Document());
+
+        assertEquals(0, statistics.getWordCount());
+        assertEquals(0, statistics.getCharacterCount());
+        assertEquals(0, statistics.getParagraphCount());
+    }
+
+    @Test
+    void updatesAfterEditingUndoAndRedo() {
         Document document = new Document();
         Section section = new Section("Intro");
         Paragraph paragraph = new Paragraph("Hello");
@@ -83,30 +133,90 @@ class DocumentStatisticsTest {
 
         DocumentEngine engine = new DocumentEngine(document);
         DocumentStatistics statistics = new DocumentStatistics(document);
+
         engine.addChangeListener(statistics);
 
         assertEquals(2, statistics.getWordCount());
         assertEquals(10, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
 
-        InsertTextCommand command =
+        InsertTextCommand insert =
                 new InsertTextCommand(paragraph, 5, " world");
 
-        engine.execute(command);
+        engine.execute(insert);
 
+        assertEquals("Hello world", paragraph.getText());
         assertEquals(3, statistics.getWordCount());
         assertEquals(16, statistics.getCharacterCount());
         assertEquals(1, statistics.getParagraphCount());
 
         engine.undo();
 
+        assertEquals("Hello", paragraph.getText());
         assertEquals(2, statistics.getWordCount());
         assertEquals(10, statistics.getCharacterCount());
         assertEquals(1, statistics.getParagraphCount());
 
         engine.redo();
 
+        assertEquals("Hello world", paragraph.getText());
         assertEquals(3, statistics.getWordCount());
         assertEquals(16, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
+    }
+
+    @Test
+    void updatesAfterCheckpointRestoreUndoAndRedo() {
+        Document document = new Document();
+        Section section = new Section("Intro");
+        Paragraph paragraph = new Paragraph("Hello");
+
+        section.addChild(paragraph);
+        document.addSection(section);
+
+        DocumentEngine engine = new DocumentEngine(document);
+        DocumentStatistics statistics = new DocumentStatistics(document);
+
+        engine.addChangeListener(statistics);
+
+        CheckpointManager checkpoints = new CheckpointManager();
+        checkpoints.createCheckpoint("original", document);
+
+        InsertTextCommand insert =
+                new InsertTextCommand(paragraph, 5, " world");
+
+        engine.execute(insert);
+
+        assertEquals(3, statistics.getWordCount());
+        assertEquals(16, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
+
+        RestoreCheckpointCommand restore =
+                new RestoreCheckpointCommand(
+                        document, checkpoints, "original");
+
+        engine.execute(restore);
+
+        assertEquals("Hello", document.getParagraphs().get(0).getText());
+        assertEquals(2, statistics.getWordCount());
+        assertEquals(10, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
+
+        engine.undo();
+
+        assertEquals(
+                "Hello world",
+                document.getParagraphs().get(0).getText());
+
+        assertEquals(3, statistics.getWordCount());
+        assertEquals(16, statistics.getCharacterCount());
+        assertEquals(1, statistics.getParagraphCount());
+
+        engine.redo();
+
+        assertEquals("Hello", document.getParagraphs().get(0).getText());
+        assertEquals(2, statistics.getWordCount());
+        assertEquals(10, statistics.getCharacterCount());
         assertEquals(1, statistics.getParagraphCount());
     }
 }
