@@ -1,11 +1,7 @@
 package edu.arizona.documenteditor.search;
 
 import edu.arizona.documenteditor.command.EditCommand;
-import edu.arizona.documenteditor.command.ReplaceTextCommand;
 import edu.arizona.documenteditor.model.Document;
-import edu.arizona.documenteditor.model.Paragraph;
-import edu.arizona.documenteditor.model.TextRun;
-import edu.arizona.documenteditor.model.TextStyle;
 
 import java.util.List;
 
@@ -18,7 +14,7 @@ public final class ReplaceFirstCommand implements EditCommand {
     private final String replacement;
     private final MatchMode mode;
 
-    private ReplaceTextCommand replacementCommand;
+    private ReplaceMatchCommand replacementCommand;
     private boolean executed;
 
     /**
@@ -65,8 +61,7 @@ public final class ReplaceFirstCommand implements EditCommand {
     }
 
     /**
-     * Replaces the first match or reapplies an undone replacement.
-     * Replacement text uses the style of the first matched character.
+     * Replaces the first matching occurrence in a paragraph or section title.
      *
      * @throws IllegalStateException if already executed
      * @throws IllegalArgumentException if no matches exist
@@ -74,34 +69,23 @@ public final class ReplaceFirstCommand implements EditCommand {
     @Override
     public void execute() {
         if (executed) {
-
-            throw new IllegalStateException("Replacement is already executed.");
-
+            throw new IllegalStateException(
+                    "Replacement is already executed.");
         }
 
         if (replacementCommand == null) {
-
-            List<SearchMatch> matches = search.find(document, query, mode);
+            List<SearchMatch> matches =
+                    search.find(document, query, mode);
 
             if (matches.isEmpty()) {
-
-                throw new IllegalArgumentException("No matches found.");
-
+                throw new IllegalArgumentException(
+                        "No matches found.");
             }
 
             SearchMatch match = matches.get(0);
-            Paragraph paragraph = match.getParagraph();
 
-            List<TextRun> selected = paragraph.slice(match.getStart(), match.getEnd());
-
-            TextStyle style = selected.get(0).getStyle();
-
-            replacementCommand = new ReplaceTextCommand(
-                    paragraph,
-                    match.getStart(),
-                    match.getEnd(),
-                    replacement,
-                    style);
+            replacementCommand =
+                    new ReplaceMatchCommand(match, replacement);
         }
 
         replacementCommand.execute();
