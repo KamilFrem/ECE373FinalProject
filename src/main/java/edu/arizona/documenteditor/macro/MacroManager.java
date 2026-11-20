@@ -58,8 +58,7 @@ public final class MacroManager {
      */
     public void stopRecording() {
         if (recording == null) {
-            throw new IllegalStateException(
-                    "No macro is being recorded.");
+            throw new IllegalStateException("No macro is being recorded.");
         }
 
         String name = recording.getName();
@@ -91,8 +90,7 @@ public final class MacroManager {
         Macro saved = macros.get(name);
 
         if (saved == null) {
-            throw new IllegalArgumentException(
-                    "Macro does not exist: " + name);
+            throw new IllegalArgumentException("Macro does not exist: " + name);
         }
 
         Macro copy = new Macro(saved.getName());
@@ -107,8 +105,7 @@ public final class MacroManager {
 
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Macro name cannot be empty.");
+            throw new IllegalArgumentException("Macro name cannot be empty.");
         }
     }
 }
