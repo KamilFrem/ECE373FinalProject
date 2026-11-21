@@ -2,6 +2,11 @@ package edu.arizona.documenteditor.engine;
 
 import edu.arizona.documenteditor.command.CreateSectionCommand;
 import edu.arizona.documenteditor.model.Document;
+import edu.arizona.documenteditor.command.CompositeCommand;
+import edu.arizona.documenteditor.command.InsertTextCommand;
+import edu.arizona.documenteditor.model.Paragraph;
+import edu.arizona.documenteditor.model.Section;
+import edu.arizona.documenteditor.model.TextStyle;
 
 import org.junit.jupiter.api.Test;
 
@@ -93,5 +98,58 @@ class DocumentEngineTest {
                         engine.getDocument(), 0, "Introduction"));
 
         assertEquals(0, notifications.get());
+    }
+
+    @Test
+    void compositeCommandExecutesAsOneEngineOperation() {
+        Document document = new Document();
+
+        Section section = new Section("Introduction");
+        Paragraph paragraph = new Paragraph("");
+
+        section.addChild(paragraph);
+        document.addSection(section);
+
+        DocumentEngine engine = new DocumentEngine(document);
+
+        AtomicInteger notifications = new AtomicInteger();
+
+        engine.addChangeListener(
+                changedDocument -> notifications.incrementAndGet());
+
+        TextStyle regular =
+                new TextStyle(false, false, "Arial", 12, "black");
+
+        CompositeCommand composite = new CompositeCommand(
+                new InsertTextCommand(
+                        paragraph, 0, "Hello", regular),
+                new InsertTextCommand(
+                        paragraph, 5, " world", regular)
+        );
+
+        // Executing the composite should perform both edits.
+        engine.execute(composite);
+
+        assertEquals("Hello world", paragraph.getText());
+
+        // The composite should count as one history entry
+        // and produce one listener notification.
+        assertEquals(1, engine.getHistoryManager().undoCount());
+        assertEquals(1, notifications.get());
+
+        // One undo should reverse both edits.
+        engine.undo();
+
+        assertEquals("", paragraph.getText());
+        assertEquals(1, engine.getHistoryManager().redoCount());
+        assertEquals(2, notifications.get());
+
+        // One redo should restore both edits.
+        engine.redo();
+
+        assertEquals("Hello world", paragraph.getText());
+        assertEquals(1, engine.getHistoryManager().undoCount());
+        assertEquals(0, engine.getHistoryManager().redoCount());
+        assertEquals(3, notifications.get());
     }
 }
