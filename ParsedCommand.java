@@ -17,6 +17,10 @@ public class ParsedCommand {
         this.name = name;
         arguments = new ArrayList<String>();
     }
+    public ParsedCommand(String name,ArrayList<String> arguments) {
+        this.name = name;
+        this.arguments = arguments;
+    }
     public String getName() {
         return name;
     }
