@@ -116,4 +116,81 @@ class FormatCommandTest {
 
         assertEquals(original, paragraph.getRuns());
     }
+
+    @Test
+    void changesItalicAndSupportsUndoAndRedo() {
+        TextStyle originalStyle =
+                new TextStyle(false, false, "Arial", 12, "black");
+
+        Paragraph paragraph = new Paragraph("Hello", originalStyle);
+
+        FormatCommand command =
+                new FormatCommand(paragraph, 0, 5, "italic", "true");
+
+        command.execute();
+
+        assertEquals("Hello", paragraph.getText());
+        assertEquals(
+                originalStyle.withItalic(true),
+                paragraph.getRuns().get(0).getStyle());
+
+        command.undo();
+
+        assertEquals(originalStyle, paragraph.getRuns().get(0).getStyle());
+
+        command.execute();
+
+        assertEquals(
+                originalStyle.withItalic(true),
+                paragraph.getRuns().get(0).getStyle());
+    }
+
+    @Test
+    void changesFontNameAndPreservesOtherFormatting() {
+        TextStyle originalStyle =
+                new TextStyle(true, true, "Arial", 18, "red");
+
+        Paragraph paragraph = new Paragraph("Hello", originalStyle);
+
+        FormatCommand command =
+                new FormatCommand(paragraph, 0, 5, "fontName", "Courier");
+
+        command.execute();
+
+        assertEquals("Hello", paragraph.getText());
+        assertEquals(
+                originalStyle.withFontName("Courier"),
+                paragraph.getRuns().get(0).getStyle());
+
+        command.undo();
+
+        assertEquals(originalStyle, paragraph.getRuns().get(0).getStyle());
+    }
+
+    @Test
+    void changesColorOnlyWithinTheSelectedRange() {
+        TextStyle originalStyle =
+                new TextStyle(true, false, "Arial", 12, "black");
+
+        Paragraph paragraph = new Paragraph("Hello world", originalStyle);
+
+        FormatCommand command =
+                new FormatCommand(paragraph, 0, 5, "color", "blue");
+
+        command.execute();
+
+        List<TextRun> expected = new ArrayList<TextRun>();
+        expected.add(new TextRun("Hello", originalStyle.withColor("blue")));
+        expected.add(new TextRun(" world", originalStyle));
+
+        assertEquals("Hello world", paragraph.getText());
+        assertEquals(expected, paragraph.getRuns());
+
+        command.undo();
+
+        List<TextRun> original = new ArrayList<TextRun>();
+        original.add(new TextRun("Hello world", originalStyle));
+
+        assertEquals(original, paragraph.getRuns());
+    }
 }
