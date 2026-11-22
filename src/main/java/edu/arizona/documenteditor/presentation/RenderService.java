@@ -54,6 +54,21 @@ public final class RenderService {
         this.width = width;
     }
 
+    /** @return the selected rendering view */
+    public Renderer getRenderer() {
+        return renderer;
+    }
+
+    /** @return the selected wrapping strategy */
+    public LineBreaker getLineBreaker() {
+        return lineBreaker;
+    }
+
+    /** @return the selected content width */
+    public int getWidth() {
+        return width;
+    }
+
     /**
      * Renders a document using the current settings.
      *

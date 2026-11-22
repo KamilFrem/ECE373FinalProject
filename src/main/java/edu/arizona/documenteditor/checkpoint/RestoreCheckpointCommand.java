@@ -2,60 +2,64 @@ package edu.arizona.documenteditor.checkpoint;
 
 import edu.arizona.documenteditor.command.EditCommand;
 import edu.arizona.documenteditor.model.Document;
+import edu.arizona.documenteditor.model.Section;
 
-import java.util.Objects;
+import java.util.List;
 
-/**
- * Restores a document from a checkpoint.
- * The restoration itself can be undone and redone.
- */
+/** Restores a deep checkpoint while preserving object identities for undo history. */
 public final class RestoreCheckpointCommand implements EditCommand {
-
     private final Document document;
     private final DocumentSnapshot checkpoint;
-
-    private DocumentSnapshot previousState;
+    private List<Section> before;
+    private List<Section> restored;
     private boolean executed;
 
-    public RestoreCheckpointCommand(
-            Document document,
-            CheckpointManager manager,
-            String checkpointName) {
-
-        this.document = Objects.requireNonNull(
-                document, "Document cannot be null.");
-
-        Objects.requireNonNull(manager, "Checkpoint manager cannot be null.");
-
-        // Capture the checkpoint now so this command remains usable
-        // even if the named checkpoint is later removed.
-        this.checkpoint = manager.getCheckpoint(checkpointName);
+    /**
+     * Captures the named checkpoint for an undoable restoration.
+     * @param document live document
+     * @param manager checkpoint manager
+     * @param checkpointName saved name
+     * @throws NullPointerException if document or manager is null
+     * @throws IllegalArgumentException if the checkpoint does not exist
+     */
+    public RestoreCheckpointCommand(Document document,
+                                    CheckpointManager manager, String checkpointName) {
+        if (document == null || manager == null) {
+            throw new NullPointerException("Document and manager cannot be null.");
+        }
+        this.document = document;
+        checkpoint = manager.getCheckpoint(checkpointName);
     }
 
+    /**
+     * Attaches an independent checkpoint copy, or reattaches it during redo.
+     * @throws IllegalStateException if already executed
+     */
     @Override
     public void execute() {
         if (executed) {
-            throw new IllegalStateException(
-                    "Checkpoint restoration is already executed.");
+            throw new IllegalStateException("Checkpoint restoration is already executed.");
         }
-
-        // Capture the current state only on the first execution.
-        if (previousState == null) {
-            previousState = new DocumentSnapshot(document);
+        if (restored == null) {
+            Document copy = checkpoint.getDocument();
+            restored = copy.getSections();
+            copy.setSections(List.of());
+            before = document.getSections();
         }
-
-        document.restore(checkpoint.getDocument());
+        document.setSections(restored);
         executed = true;
     }
 
+    /**
+     * Reattaches the original objects so older commands still address the document.
+     * @throws IllegalStateException if not executed
+     */
     @Override
     public void undo() {
-        if (!executed || previousState == null) {
-            throw new IllegalStateException(
-                    "Cannot undo a restoration that was not executed.");
+        if (!executed) {
+            throw new IllegalStateException("Execute restoration before undoing it.");
         }
-
-        document.restore(previousState.getDocument());
+        document.setSections(before);
         executed = false;
     }
 }

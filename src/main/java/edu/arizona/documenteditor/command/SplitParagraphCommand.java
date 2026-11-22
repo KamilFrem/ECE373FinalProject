@@ -21,6 +21,12 @@ public final class SplitParagraphCommand implements EditCommand {
     private List<TextRun> originalRuns;
     private boolean executed;
 
+    /**
+     * Creates a split operation.
+     * @param paragraph paragraph to split
+     * @param position zero-based split position
+     * @throws NullPointerException if paragraph is null
+     */
     public SplitParagraphCommand(Paragraph paragraph, int position) {
         this.paragraph = Objects.requireNonNull(
                 paragraph, "Paragraph cannot be null.");
@@ -28,6 +34,7 @@ public final class SplitParagraphCommand implements EditCommand {
         this.position = position;
     }
 
+    /** Executes the split or reapplies it after undo. */
     @Override
     public void execute() {
         if (executed) {
@@ -52,18 +59,24 @@ public final class SplitParagraphCommand implements EditCommand {
 
         // split() returns the later half as a detached paragraph.
         Paragraph suffix = paragraph.split(position);
+        // Reuse the same suffix object on redo. Later commands may hold it.
+        if (secondParagraph == null) {
+            secondParagraph = suffix;
+        } else {
+            secondParagraph.setRuns(suffix.getRuns());
+        }
 
         try {
-            parent.insertChild(childIndex + 1, suffix);
+            parent.insertChild(childIndex + 1, secondParagraph);
         } catch (RuntimeException exception) {
             paragraph.setRuns(originalRuns);
             throw exception;
         }
 
-        secondParagraph = suffix;
         executed = true;
     }
 
+    /** Restores the original paragraph and removes the suffix. */
     @Override
     public void undo() {
         if (!executed) {
@@ -77,6 +90,7 @@ public final class SplitParagraphCommand implements EditCommand {
         executed = false;
     }
 
+    /** @return the suffix paragraph, or null before the first execution */
     public Paragraph getSecondParagraph() {
         return secondParagraph;
     }
