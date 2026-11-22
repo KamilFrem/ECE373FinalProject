@@ -1,7 +1,6 @@
 import java.util.LinkedHashMap;
 
 public class MacroManager {
-
     LinkedHashMap<String, Macro> Macros;
     public Macro Recording;
 
@@ -11,7 +10,6 @@ public class MacroManager {
     }
 
     public void startRecording(String name) {
-
         Recording = new Macro(name);
     }
 
@@ -20,13 +18,11 @@ public class MacroManager {
     }
 
     public void stopRecording() {
-
-        Macros.put(Recording.name,Recording);
+        Macros.put(Recording.name, Recording);
         Recording = null;
     }
 
     public Macro getMacro(String name) {
-
         return Macros.get(name);
     }
 }

@@ -4,7 +4,6 @@ public class Macro {
     public String name;
     public ArrayList<String> commandLines;
 
-
     public Macro() {
         name = "";
         commandLines = new ArrayList<String>();
@@ -28,4 +27,3 @@ public class Macro {
         return commandLines;
     }
 }
-
