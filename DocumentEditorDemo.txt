@@ -1,0 +1,74 @@
+# ECE 373 Document Editor - Complete Feature Demonstration
+# Run this file with the project's script runner.
+# Blank lines and lines beginning with # are ignored.
+
+# 1. Display the available commands
+help
+
+# 2. Create a document with a section, paragraphs, and a subsection
+section "Project Overview"
+paragraph 1 "This document demonstrates the editor's core capabilities."
+paragraph 1 "The editor supports structured sections, text editing, and formatting."
+subsection 1 "Editing Operations"
+paragraph 1.1 "Insert, delete, replace, split, and merge are available."
+paragraph 1 "Search helps locate words throughout the document."
+
+# 3. Insert text and apply character formatting
+insert 1 1 0 "DEMO: "
+format 1 1 0 4 bold true
+format 1 2 0 6 italic true
+
+# 4. Search and replace text
+find "editor"
+replacefirst "core capabilities" "main features"
+replaceall "available" "supported" word
+
+# 5. Delete and replace a range of text
+# The phrase 'helps ' occupies character positions [7, 13) in paragraph 3.
+delete 1 3 7 13
+replace 1 3 7 13 "can easily"
+
+# 6. Split a paragraph, then merge it back together
+split 1 3 24
+merge 1 3
+
+# 7. Format the section title
+# Character positions [0, 15) select 'Project Overview'.
+titleformat 1 0 15 bold true
+
+# 8. Display the document in marked-up and plain-text modes
+view marked
+render
+view plain
+render
+
+# 9. Change line wrapping and document width
+width 45
+wrap balanced
+render
+wrap greedy
+render
+
+# 10. Display document statistics
+stats
+
+# 11. Demonstrate undo and redo
+undo
+redo
+
+# 12. Save a checkpoint, make a change, and restore the checkpoint
+checkpoint before_extra_paragraph
+paragraph 1 "This temporary paragraph will be removed by restoring the checkpoint."
+restore before_extra_paragraph
+checkpoints
+
+# 13. Record and replay a formatting macro
+record emphasize_demo
+format 1 1 0 4 italic true
+stop
+replay emphasize_demo
+
+# 14. Final document and statistics
+view plain
+render
+stats
